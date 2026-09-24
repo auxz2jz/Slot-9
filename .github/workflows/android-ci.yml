@@ -31,13 +31,38 @@ jobs:
         with:
           gradle-version: "9.6.0"
 
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper --gradle-version 9.6.0
+
       - name: Build debug APK
-        run: gradle --no-daemon :app:assembleDebug
+        run: ./gradlew --no-daemon :app:assembleDebug
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v7
         with:
           name: DVR-Video-Player-v0.1.0-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload Android Studio project
+        uses: actions/upload-artifact@v7
+        with:
+          name: DVR-Video-Player-v0.1.0-Android-Studio
+          path: |
+            settings.gradle.kts
+            build.gradle.kts
+            gradle.properties
+            gradlew
+            gradlew.bat
+            gradle/wrapper/**
+            app/build.gradle.kts
+            app/src/**
+            README.md
+            PROJECT_MEMORY.md
+            DVR_PLAYER_ROADMAP.md
+            TESTING_DIAGNOSTICS.md
+            BUILD_WORKFLOW.md
+            test_reports/**
           if-no-files-found: error
           retention-days: 30
