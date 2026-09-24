@@ -234,6 +234,9 @@ Build v0.2.0 as the inspection-controls release while preserving the confirmed v
 
 - v0.2.0 started from the confirmed v0.1.0 Android Studio project.
 - v0.1.0 remains the recovery baseline and must not be overwritten.
+- v0.2.0 Android Studio source candidate packaged with live scrubbing, zoom/pan, Reset Zoom, approximate frame stepping, slow speeds, and inspection_controls_v2 diagnostics.
+- Local XML/manifest and syntax-oriented checks passed; full Gradle compile is pending because the local environment lacks Android SDK/network dependency access.
+- Android Studio ZIP handoff prepared for user compilation and physical-device guided testing.
 
 - GitHub slot search completed.
 - Slot-8 is occupied.
@@ -482,11 +485,12 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. Preserve v0.1.0 as the known-good baseline checkpoint.
-2. Continue from the Android Studio-ready project.
-3. Implement the next planned playback/inspection features without breaking the confirmed baseline.
-4. Add guided tests and diagnostic signals in the same development cycle for every new feature.
-5. Export and review diagnostic ZIPs before marking new features DONE.
+1. User opens the v0.2.0 Android Studio ZIP and completes Gradle sync/build.
+2. Install/run v0.2.0 on the physical Android device.
+3. Tap **v0.2 Test** and follow the on-screen inspection_controls_v2 steps.
+4. Export the diagnostic ZIP whether PASS or FAIL and upload the latest export.
+5. Analyze the diagnostic package and fix any compile/device-specific issue before marking v0.2.0 features DONE.
+6. Keep v0.1.0 as the known-good recovery baseline until v0.2.0 passes.
 
 ---
 
