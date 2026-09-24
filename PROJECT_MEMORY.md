@@ -181,7 +181,7 @@ If an implementation requires a major architecture change, record the reason bef
 **Repository:** auxz2jz/Slot-9  
 **Current version:** v0.1.0 planned  
 **Last known working version:** v0.1.0 GitHub-built APK — user confirmed working on physical Android phone  
-**Build status:** v0.1.0 debug APK compiles successfully in GitHub CI and has been installed/run successfully on the user's physical Android phone; full guided diagnostic validation is still pending  
+**Build status:** v0.1.0 debug APK compiles successfully in GitHub CI and the baseline guided diagnostic test has PASSed on the user's physical Android phone  
 **Current phase:** Playback foundation + guided testing/diagnostics — source checkpoint built
 
 ---
@@ -242,7 +242,7 @@ No unrelated repositories or projects. Slot-9 remains dedicated to the DVR Video
 - GitHub CI run 9 compiled successfully after removing an incompatible explicit Compose weight import.
 - GitHub CI run 10 compiled successfully and published the debug APK artifact `DVR-Video-Player-v0.1.0-debug`.
 - User later confirmed the GitHub-built v0.1.0 APK installed and worked on the physical Android phone.
-- Full guided diagnostic validation is still pending; a general 'worked' confirmation does not replace the structured guided-test ZIP.
+- Baseline guided diagnostic ZIPs were uploaded and reviewed on 2026-09-24. Open Video, Play, Pause, and Seek all PASSed with no recorded errors or crashes.
 
 ---
 
@@ -250,13 +250,13 @@ No unrelated repositories or projects. Slot-9 remains dedicated to the DVR Video
 
 **Version:** v0.1.0 source checkpoint  
 **Commit:** 9d9f560ff49d2798f7b80d4afaa71e233cfafe89  
-**Status:** CI BUILD PASS; user-confirmed physical-device install/run success; structured guided validation pending  
+**Status:** CI BUILD PASS; physical-device baseline guided test PASS  
 **Confirmed:** Android debug APK builds successfully in GitHub Actions and is published as the `DVR-Video-Player-v0.1.0-debug` artifact.  
 **Implemented in source:** local video selection, Media3 playback surface, play/pause, seek bar, time display, structured diagnostics, device/media collection, guided baseline test, ZIP export, persisted crash diagnostics.  
 **User confirmed:** the GitHub-built APK was used on the physical Android phone and worked.
-**Still not formally confirmed by diagnostics:** the complete guided Open/Play/Pause/Seek test and diagnostic ZIP review.
+**Formally confirmed by diagnostics:** local media opening, Media3 preparation/rendering, Play, Pause, Seek, guided-test result capture, structured event logging, and diagnostic ZIP export.
 
-Do not mark the user-facing v0.1.0 features DONE until the guided test is run on-device and its exported diagnostic ZIP is reviewed.
+The tested v0.1.0 baseline features may now be treated as confirmed. Keep broader Phase 1 status PARTIAL until remaining planned features such as live-frame scrubbing, jump controls, and frame stepping are implemented and tested.
 
 ---
 
@@ -475,13 +475,11 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. Install/run the v0.1.0 debug APK on the physical Android device.
-2. Tap **Guided Test**.
-3. Follow the on-screen sequence: Open Video -> Play -> Pause -> Seek.
-4. Export **Test + Diagnostics ZIP**, whether the test PASSes or FAILs.
-5. Upload that ZIP for analysis; manual explanation should not be necessary for ordinary failures.
-6. Fix any device-specific issue using the captured evidence.
-7. Only after a successful device test, mark the confirmed v0.1.0 features WORKING/DONE and proceed to zoom/pan work.
+1. Preserve v0.1.0 as the known-good baseline checkpoint.
+2. Continue from the Android Studio-ready project.
+3. Implement the next planned playback/inspection features without breaking the confirmed baseline.
+4. Add guided tests and diagnostic signals in the same development cycle for every new feature.
+5. Export and review diagnostic ZIPs before marking new features DONE.
 
 ---
 
