@@ -7,7 +7,7 @@
 **Platform:** Android  
 **Primary use case:** Review body-camera and other local video footage with DVR-style transport, precise seeking, non-distorting zoom, object tracking, target lock, and multi-frame enhancement.
 
-This roadmap is a permanent source of truth. Before implementing or changing features, read `PROJECT_MEMORY.md` first, then this file.
+This roadmap is a permanent source of truth. Before implementing or changing features, read `PROJECT_MEMORY.md` first, then this file, then `TESTING_DIAGNOSTICS.md`.
 
 ---
 
@@ -36,6 +36,148 @@ This roadmap is a permanent source of truth. Before implementing or changing fea
 - BLOCKED
 - FAILED
 - DEFERRED
+
+---
+
+# PHASE 0 — PERMANENT TESTING & DIAGNOSTICS INFRASTRUCTURE
+
+## 0.1 Guided test runner — IN PROGRESS
+
+Every new user-facing feature must have an in-app guided test.
+
+The test UI must:
+- tell the tester exactly what action to perform,
+- show one step at a time,
+- show current progress,
+- automatically detect objective success signals where possible,
+- mark PASS / FAIL / PARTIAL,
+- never require the tester to describe normal diagnostic details manually when the app can record them itself.
+
+Initial baseline guided test:
+1. Open a video.
+2. Press Play.
+3. Press Pause.
+4. Drag/seek the timeline.
+5. Export results.
+
+Each step advances only when corresponding app/player signals confirm it.
+
+---
+
+## 0.2 Structured event diagnostics — IN PROGRESS
+
+Record timestamped diagnostic events such as:
+- app/session start,
+- screen/control actions,
+- button presses,
+- file picker requested/result,
+- selected media URI metadata without copying source media,
+- play/pause requests,
+- actual player isPlaying changes,
+- playback state changes,
+- seek start/update/finish,
+- position discontinuities,
+- playback speed,
+- video size,
+- errors/exceptions,
+- guided-test step transitions,
+- future zoom/pan/tracking/Target Lock events.
+
+Use machine-readable JSON Lines plus a human-readable summary.
+
+---
+
+## 0.3 Device/application diagnostics — IN PROGRESS
+
+Capture:
+- app version/build,
+- Android version/API,
+- manufacturer/model/device,
+- CPU ABI,
+- memory class/available memory where practical,
+- display dimensions/density,
+- locale,
+- diagnostic session start/end,
+- relevant permissions/state when needed.
+
+Do not collect unrelated personal data.
+
+---
+
+## 0.4 Media diagnostics — IN PROGRESS
+
+For the opened video record, where available:
+- display name,
+- MIME type,
+- duration,
+- video width/height,
+- rotation,
+- frame rate,
+- bitrate,
+- video/audio codec information,
+- player-reported tracks,
+- playback errors.
+
+Do not include or upload the video itself unless the user separately chooses to provide it.
+
+---
+
+## 0.5 Diagnostic ZIP export — IN PROGRESS
+
+A completed or interrupted test session must be exportable as a single ZIP package containing:
+- README/SUMMARY,
+- device_app_info.txt,
+- media_info.txt,
+- events.jsonl,
+- guided_test_results.json,
+- error details where present.
+
+The user chooses where to save the ZIP using Android's document save UI.
+
+Core diagnostics stay on-device and are not automatically uploaded.
+
+---
+
+## 0.6 Feature-specific test definitions — REQUIRED
+
+Whenever a new roadmap feature is implemented, its guided test must be added in the same development cycle.
+
+Examples:
+
+**Zoom**
+- instruction: pinch to at least 2x,
+- diagnostics: record scale gesture and resulting internal zoom scale,
+- success: scale reaches expected threshold without independent X/Y distortion.
+
+**Pan**
+- instruction: while zoomed, drag the video,
+- diagnostics: record drag delta and resulting viewport offset,
+- success: offset changes while zoom remains active.
+
+**2x playback**
+- instruction: choose 2x,
+- diagnostics: record requested speed and player playback parameters,
+- success: actual player speed becomes approximately 2.0.
+
+**DVR scan**
+- instruction: start 16x forward scan for several seconds,
+- diagnostics: record start/end media positions and elapsed real time,
+- success: effective media advance is consistent with high-speed scan behavior.
+
+**Object tracking**
+- instruction: select a target and allow it to move,
+- diagnostics: record target box coordinates/confidence per sampled frame,
+- success: tracker remains active and target position changes coherently.
+
+**Target Lock**
+- instruction: lock target and play,
+- diagnostics: record tracked center and displayed lock-point error,
+- success: target remains within allowed screen-position tolerance.
+
+**Frame stacking**
+- instruction: create stacked result,
+- diagnostics: record candidate frames, alignment scores, rejected frames, weights/method and output dimensions,
+- success: pipeline completes without hidden fallback or failure.
 
 ---
 
@@ -723,15 +865,19 @@ The project should NOT jump directly into object tracking or frame stacking.
 
 Recommended sequence:
 
-### v0.1.x — Playback foundation
+### v0.1.x — Playback foundation + diagnostic harness
 1. Android project shell.
-2. Local file picker.
-3. Media3 playback.
-4. Play/pause.
-5. Current/total time.
-6. DVR seek bar.
-7. Reliable scrubbing.
-8. Test report.
+2. Permanent diagnostic/event logger.
+3. Guided-test controller and on-screen instructions.
+4. Diagnostic ZIP exporter.
+5. Local file picker.
+6. Media3 playback.
+7. Play/pause.
+8. Current/total time.
+9. DVR seek bar.
+10. Reliable scrubbing.
+11. Baseline self-verifying guided test.
+12. Exported diagnostic report.
 
 ### v0.2.x — Zoom and inspection
 1. Pinch zoom.
@@ -862,11 +1008,12 @@ When the user introduces a new feature idea:
 3. Decide which phase it belongs to.
 4. Do not silently implement it during unrelated work.
 5. Update `PROJECT_MEMORY.md` if the idea changes architecture or current work.
+6. Add or update that feature's guided test and required diagnostic signals in `TESTING_DIAGNOSTICS.md`.
 
 ---
 
 # CURRENT ROADMAP CHECKPOINT
 
 **Date:** 2026-09-23  
-**State:** Initial roadmap created before application code.  
-**Next action:** User review, then v0.1.0 Android project initialization.
+**State:** Roadmap approved; v0.1.0 playback + guided testing/diagnostics initialization authorized.  
+**Next action:** Complete the v0.1.0 source checkpoint, then build/test on device and export the baseline diagnostic ZIP.
