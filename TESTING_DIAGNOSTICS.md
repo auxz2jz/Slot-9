@@ -623,8 +623,8 @@ For every new feature commit/checkpoint:
 # CURRENT STATUS
 
 **Date:** 2026-09-23  
-**Version:** v0.1.0 development  
-**Status:** Source implementation compiled successfully in GitHub CI; physical-device validation pending.
+**Version:** v0.3.0 development  
+**Status:** v0.2.0 physical-device guided test PASS; v0.3.0 source candidate awaiting Android Studio compile/device validation.
 
 Implemented in v0.1.0 source:
 - session-specific JSONL event logger,
@@ -677,3 +677,53 @@ New diagnostic signals:
 - Media3 playback-parameter, rendered-frame and position-discontinuity callbacks.
 
 Frame stepping in v0.2.0 is best-effort: source capture frame rate is used when available, otherwise a 30 fps fallback interval is used. Exact decoded-frame stepping for long-GOP media may require a deeper decoder/index implementation later.
+
+
+---
+
+# v0.3.0 DVR REVIEW GUIDED TEST
+
+## Test ID
+
+`dvr_review_v3`
+
+Purpose: verify the new frame-navigation and high-speed review controls while regressing core playback.
+
+Guided steps:
+
+1. **Open media** — Media3 reaches READY.
+2. **Play** — playback starts and position advances.
+3. **Single frame** — tap Frame > once; requested frame/timestamp advances and Media3 confirms the new position.
+4. **Held frame advance** — press and hold Frame > long enough for repeated steps; diagnostics require at least 3 repeat requests and advancement of at least 3 estimated frames.
+5. **2x playback** — select 2x and play; Media3 must report approximately 2.0x and media position must advance faster than real time.
+6. **4x playback** — select 4x; Media3 must report approximately 4.0x and progression must be consistent with accelerated playback.
+7. **16x DVR forward scan** — run forward scan long enough for measurable media movement, then Stop Scan; diagnostics verify positive media delta and high effective rate.
+8. **16x DVR reverse scan** — run reverse scan and stop; diagnostics verify negative media delta and high effective rate.
+
+New diagnostic signals include:
+- `FRAME_STEP / FRAME_HOLD_STARTED`
+- `FRAME_STEP / FRAME_HOLD_ENDED`
+- repeated frame-step request counts
+- detected frame rate and source
+- estimated current/target frame numbers
+- `DVR_SCAN / SCAN_STARTED`
+- sampled `DVR_SCAN / SCAN_TICK`
+- `DVR_SCAN / SCAN_FINISHED`
+- requested scan direction/rate
+- start/end media positions
+- real elapsed time
+- effective scan rate
+- Media3 playback speed callbacks for 2x/4x.
+
+## Frame Counter / Frame Rate Rules
+
+v0.3 displays an estimated current/total frame counter using:
+1. selected Media3 video-track `Format.frameRate` when available,
+2. existing media metadata frame rate when available,
+3. 30 fps fallback only when no reliable reported rate is available.
+
+The counter is timestamp/frame-rate derived. Variable-frame-rate media and long-GOP codecs may not map perfectly to exact decoded-frame ordinal positions. Exact forensic frame indexing may require a future decoder/index pass.
+
+## Scrollability Test
+
+The controls/test/diagnostic area below the video is vertically scrollable so later controls remain reachable. This is a usability requirement rather than a numeric guided-test PASS condition; any inability to reach lower controls should be reported and logged as a UI regression.
