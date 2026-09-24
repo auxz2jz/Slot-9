@@ -1,0 +1,49 @@
+DVR VIDEO PLAYER — v0.3.0 SOURCE CANDIDATE
+Date: 2026-09-24
+Repository: auxz2jz/Slot-9
+Known-good base: v0.2.0 physical-device guided-test PASS
+
+USER-REQUESTED CHANGES INCLUDED
+- visible current/total frame counter
+- frame rate/source display
+- single-tap previous/next frame stepping retained
+- press-and-hold repeated previous/next frame stepping with slow repeat cadence
+- vertically scrollable controls/diagnostics area
+
+NEXT ROADMAP FEATURES INCLUDED
+- 2x and 4x true Media3 accelerated playback
+- DVR-style forward scan at 8x, 16x, 32x and 64x
+- DVR-style reverse scan at 8x, 16x, 32x and 64x
+- adaptive scan jumps based on requested rate and elapsed wall time
+
+FRAME-RATE IMPROVEMENT
+v0.2 diagnostics showed the tested MKV used fallback_30fps because the previous metadata path did not expose frame rate.
+v0.3 now prefers the selected Media3 video track's reported frameRate when available, then media metadata, and only then falls back to 30 fps.
+
+GUIDED TEST
+Test ID: dvr_review_v3
+
+Steps:
+1. Open media
+2. Play
+3. Single forward frame step
+4. Press-and-hold forward frame stepping
+5. 2x playback
+6. 4x playback
+7. 16x forward DVR scan
+8. 16x reverse DVR scan
+
+LOCAL CHECKS
+- Android XML/manifest structure checked
+- Kotlin source structure/syntax-oriented checks performed
+- complete Gradle Wrapper retained
+- final Android Studio ZIP integrity test passed
+
+LIMITATION
+A full Android Gradle build was not completed in the local tool environment because the Android SDK/dependency environment is not available there. Android Studio compilation is therefore the next verification step.
+
+STATUS
+SOURCE CANDIDATE — ANDROID STUDIO COMPILE + PHYSICAL DEVICE dvr_review_v3 REQUIRED
+
+RECOVERY RULE
+v0.2.0 remains the known-good fallback until v0.3.0 compiles and the guided diagnostic test passes.
