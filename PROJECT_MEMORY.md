@@ -161,8 +161,8 @@ If an implementation requires a major architecture change, record the reason bef
 **Repository:** auxz2jz/Slot-9  
 **Current version:** v0.1.0 planned  
 **Last known working version:** None yet — pre-code  
-**Build status:** Android v0.1.0 source initialization in progress; device build not yet verified  
-**Current phase:** Playback foundation + guided testing/diagnostics
+**Build status:** v0.1.0 debug APK compiles successfully in GitHub CI; on-device guided validation pending  
+**Current phase:** Playback foundation + guided testing/diagnostics — source checkpoint built
 
 ---
 
@@ -218,17 +218,23 @@ No unrelated repositories or projects. Slot-9 remains dedicated to the DVR Video
 - Testing/diagnostic architecture is being added before the first playback build.
 - Android v0.1.0 source initialization is now authorized.
 - First batch source-write attempt failed before any source files were written due to orchestration quoting; failure recorded in Error Log and implementation method changed.
+- Android project foundation, Media3 playback screen, diagnostic event logger, device/media collectors, guided-test controller, crash persistence, ZIP exporter and CI workflow are committed.
+- GitHub CI run 9 compiled successfully after removing an incompatible explicit Compose weight import.
+- GitHub CI run 10 compiled successfully and published the debug APK artifact `DVR-Video-Player-v0.1.0-debug`.
+- Device behavior has NOT yet been marked DONE; the next proof is the exported on-device guided-test diagnostic ZIP.
 
 ---
 
 # CURRENT KNOWN GOOD STATE
 
-**Version:** Planning checkpoint 0  
-**Status:** Documentation only  
-**Confirmed:** Repository selection and project specification  
-**Code:** None yet
+**Version:** v0.1.0 source checkpoint  
+**Commit:** 9d9f560ff49d2798f7b80d4afaa71e233cfafe89  
+**Status:** CI BUILD PASS; device validation pending  
+**Confirmed:** Android debug APK builds successfully in GitHub Actions and is published as the `DVR-Video-Player-v0.1.0-debug` artifact.  
+**Implemented in source:** local video selection, Media3 playback surface, play/pause, seek bar, time display, structured diagnostics, device/media collection, guided baseline test, ZIP export, persisted crash diagnostics.  
+**Not yet confirmed:** installation/launch/playback/seek/export behavior on the user's physical Android device.
 
-Until the first application build succeeds, this is the recovery point.
+Do not mark the user-facing v0.1.0 features DONE until the guided test is run on-device and its exported diagnostic ZIP is reviewed.
 
 ---
 
@@ -287,6 +293,33 @@ Use only these status labels in the roadmap:
 ---
 
 # ERROR LOG
+
+## Error — CI environment/setup sequence
+
+- Date: 2026-09-23
+- Version: v0.1.0 development
+- Feature: Android CI
+- Failures encountered:
+  1. `android-actions/setup-android@v3` attempted to install obsolete SDK package `tools`.
+  2. After removing that action, `sdkmanager` was not on PATH.
+  3. After using the explicit SDK-manager path, `platforms;android-37` was unavailable from the runner's configured repository.
+- Resolution:
+  - Use the runner's existing cmdline-tools path directly.
+  - Build the first app checkpoint against Android API 36.
+  - Use an API-36-compatible Compose dependency set.
+- Result: CI reached the actual Gradle/Kotlin compile stage.
+- Lesson: do not restore the failed setup-android/Android-37 CI configuration without new evidence.
+
+## Error — Compose RowScope weight import
+
+- Date: 2026-09-23
+- Version: v0.1.0 development
+- Feature: Player UI compile
+- Exact symptom/error: `Cannot access 'val RowColumnParentData?.weight: Float': it is internal in file.`
+- Cause: explicit `androidx.compose.foundation.layout.weight` import was incompatible with the selected Compose set.
+- Fix: removed the explicit import and let `Modifier.weight()` resolve from RowScope.
+- Result: GitHub CI run 9 passed; run 10 also passed and produced the APK.
+- Lesson: preserve this fix when refactoring Compose layout imports.
 
 ## Error — source batch generation quoting failure
 - Date: 2026-09-23
@@ -420,12 +453,13 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. Create `TESTING_DIAGNOSTICS.md`.
-2. Initialize Android v0.1.0 source.
-3. Implement baseline playback + diagnostics + guided test.
-4. User builds/runs v0.1.0 on device.
-5. User follows the on-screen baseline guided test and exports the diagnostic ZIP.
-6. Analyze uploaded results and only then mark confirmed features WORKING/DONE.
+1. Install/run the v0.1.0 debug APK on the physical Android device.
+2. Tap **Guided Test**.
+3. Follow the on-screen sequence: Open Video -> Play -> Pause -> Seek.
+4. Export **Test + Diagnostics ZIP**, whether the test PASSes or FAILs.
+5. Upload that ZIP for analysis; manual explanation should not be necessary for ordinary failures.
+6. Fix any device-specific issue using the captured evidence.
+7. Only after a successful device test, mark the confirmed v0.1.0 features WORKING/DONE and proceed to zoom/pan work.
 
 ---
 
