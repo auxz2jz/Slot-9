@@ -1,0 +1,57 @@
+DVR VIDEO PLAYER — v0.2.0 PHYSICAL DEVICE GUIDED TEST REPORT
+
+Date: 2026-09-24
+Repository: auxz2jz/Slot-9
+App version: 0.2.0
+Test ID: inspection_controls_v2
+
+OVERALL RESULT
+PASS — all 10 guided steps passed.
+
+TESTED MEDIA
+Star.Trek.Strange.New.Worlds.S04E09.Once.Laan.a.Time.2160p.AMZN.WEB-DL.DDP5.1.H.265-FLUX.mkv
+
+DEVICE
+Samsung SM-S908U1
+Android 16 / API 36
+
+GUIDED STEPS
+1. Open media — PASS
+2. Play — PASS
+3. Pause — PASS
+4. Live scrub — PASS
+5. Pinch zoom — PASS
+6. Pan while zoomed — PASS
+7. Reset Zoom — PASS
+8. Next frame — PASS
+9. Previous frame — PASS
+10. 0.50x playback — PASS
+
+ERRORS / CRASHES
+None recorded.
+No previous crash was present.
+
+IMPORTANT FRAME-STEP OBSERVATION
+The frame-step diagnostics reported frameRate=30 with frameRateSource=fallback_30fps. The selected MKV did not provide captureFrameRate through the v0.2 MediaMetadataRetriever metadata path. v0.3 should additionally inspect the selected Media3 video track Format.frameRate and use that when available.
+
+DIAGNOSTIC EXPORTS
+Two uploaded ZIPs share the same session ID:
+92be2024-d2aa-47ca-9b0f-3669cfc40c38
+The later ZIP is the final export of the same PASS session.
+
+CONCLUSION
+v0.2.0 is now the known-good physical-device baseline for:
+- v0.1 playback/open/seek behavior
+- live scrub frame updates
+- uniform pinch zoom
+- pan while zoomed
+- Reset Zoom
+- single forward/back frame stepping
+- slow playback through 0.50x
+- v0.2 guided diagnostics and ZIP export
+
+NEXT VERSION REQUESTS
+- visible frame counter
+- press-and-hold previous/next frame buttons for repeated slow frame stepping
+- scrollable controls/diagnostics area
+- proceed to DVR high-speed review features
