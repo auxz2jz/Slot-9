@@ -1,0 +1,88 @@
+DVR VIDEO PLAYER — v0.1.0 PHYSICAL DEVICE GUIDED TEST REPORT
+
+Date: 2026-09-24
+Repository: auxz2jz/Slot-9
+App version: 0.1.0
+Test ID: baseline_playback_seek_v1
+
+DEVICE
+Manufacturer: Samsung
+Model: SM-S908U1
+Android: 16
+API level: 36
+CPU ABIs: arm64-v8a, armeabi-v7a, armeabi
+
+TEST MEDIA
+File: jellyfish-55-mbps-hd-h264_converted (1).webm
+Container/MIME: video/webm
+Resolution: 854x480
+Duration: 30.308 s
+File size: 4,432,674 bytes
+Bitrate reported: 1,170,034 bps
+Audio: yes
+Video: yes
+
+OVERALL RESULT
+PASS
+
+GUIDED TEST RESULTS
+1. Open media — PASS
+   The selected video opened and Media3 reached READY state.
+
+2. Play — PASS
+   Play button input was recorded.
+   Media3 reported isPlaying=true.
+   Playback position advanced enough to satisfy the test.
+
+3. Pause — PASS
+   Pause button input was recorded.
+   Media3 reported isPlaying=false.
+
+4. Seek — PASS
+   Timeline moved from 3,461 ms to 12,045 ms.
+   Requested seek difference: 8,584 ms.
+   Media3 reported a position discontinuity to 12,045 ms.
+   The test confirmed the player reached the requested target within tolerance.
+
+MEASURED RESPONSE TIMES FROM DIAGNOSTIC EVENTS
+- File-picker return to first rendered frame: approximately 424 ms
+- File-picker return to READY state: approximately 435 ms
+- Play button press to isPlaying=true: approximately 3 ms
+- Pause button press to isPlaying=false: approximately 7 ms
+- Seek release to position discontinuity: approximately 2 ms
+- Seek release to first rendered frame: approximately 94 ms
+- Seek release to READY state: approximately 109 ms
+
+ADDITIONAL OBSERVATION
+After the guided test completed, a second manual seek was performed from 12,045 ms to 17,313 ms. Media3 again reported the requested position, rendered a new frame, and returned to READY successfully.
+
+ERRORS / CRASHES
+None recorded.
+No previous crash record was present.
+
+DIAGNOSTIC EXPORTS
+Two ZIP files were uploaded from the same session.
+They share session ID:
+1b6abc24-56ed-4094-9b7f-0340b4a45552
+
+The second ZIP is simply a later export of the same session and contains a few additional export/player events. It does not represent a separate test run.
+
+CONCLUSION
+The baseline v0.1.0 guided diagnostic system successfully verified:
+- local media opening,
+- video preparation/rendering,
+- Play,
+- Pause,
+- timeline seek,
+- structured diagnostic event capture,
+- test-result capture,
+- diagnostic ZIP export.
+
+The diagnostic design worked as intended: the app provided objective evidence of button input and resulting Media3 state changes without requiring manual description.
+
+STATUS
+v0.1.0 baseline guided test: PASS
+Physical-device validation for tested baseline features: CONFIRMED
+
+REMAINING PHASE-1 WORK
+The full Phase 1 roadmap remains partially incomplete because features such as live-frame scrubbing during drag, frame stepping, jump controls, and other planned playback behavior have not yet been implemented/tested.
