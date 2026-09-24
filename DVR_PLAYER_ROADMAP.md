@@ -41,7 +41,7 @@ This roadmap is a permanent source of truth. Before implementing or changing fea
 
 # PHASE 0 — PERMANENT TESTING & DIAGNOSTICS INFRASTRUCTURE
 
-## 0.1 Guided test runner — IN PROGRESS
+## 0.1 Guided test runner — PARTIAL
 
 Every new user-facing feature must have an in-app guided test.
 
@@ -64,7 +64,7 @@ Each step advances only when corresponding app/player signals confirm it.
 
 ---
 
-## 0.2 Structured event diagnostics — IN PROGRESS
+## 0.2 Structured event diagnostics — PARTIAL
 
 Record timestamped diagnostic events such as:
 - app/session start,
@@ -87,7 +87,7 @@ Use machine-readable JSON Lines plus a human-readable summary.
 
 ---
 
-## 0.3 Device/application diagnostics — IN PROGRESS
+## 0.3 Device/application diagnostics — PARTIAL
 
 Capture:
 - app version/build,
@@ -104,7 +104,7 @@ Do not collect unrelated personal data.
 
 ---
 
-## 0.4 Media diagnostics — IN PROGRESS
+## 0.4 Media diagnostics — PARTIAL
 
 For the opened video record, where available:
 - display name,
@@ -122,7 +122,7 @@ Do not include or upload the video itself unless the user separately chooses to 
 
 ---
 
-## 0.5 Diagnostic ZIP export — IN PROGRESS
+## 0.5 Diagnostic ZIP export — PARTIAL
 
 A completed or interrupted test session must be exportable as a single ZIP package containing:
 - README/SUMMARY,
@@ -183,7 +183,7 @@ Examples:
 
 # PHASE 1 — CORE DVR PLAYER
 
-## 1.1 Local video opening — PLANNED
+## 1.1 Local video opening — PARTIAL
 
 Requirements:
 - Open local video files from Android storage/file picker.
@@ -197,7 +197,7 @@ Preferred playback foundation:
 
 ---
 
-## 1.2 Main playback view — PLANNED
+## 1.2 Main playback view — PARTIAL
 
 Requirements:
 - Large video display.
@@ -210,7 +210,7 @@ Requirements:
 
 ---
 
-## 1.3 DVR timeline / seek bar — PLANNED
+## 1.3 DVR timeline / seek bar — PARTIAL
 
 Requirements:
 - Large, easy-to-grab seek bar.
@@ -1015,5 +1015,6 @@ When the user introduces a new feature idea:
 # CURRENT ROADMAP CHECKPOINT
 
 **Date:** 2026-09-23  
-**State:** Roadmap approved; v0.1.0 playback + guided testing/diagnostics initialization authorized.  
-**Next action:** Complete the v0.1.0 source checkpoint, then build/test on device and export the baseline diagnostic ZIP.
+**State:** v0.1.0 source checkpoint compiles successfully in GitHub CI and a debug APK artifact has been produced. Phase 0 and initial Phase 1 features are PARTIAL because physical-device validation is still pending.  
+**Known-good source commit:** `9d9f560ff49d2798f7b80d4afaa71e233cfafe89`  
+**Next action:** Run the in-app baseline Guided Test on the physical Android device and export/upload the diagnostic ZIP.
