@@ -643,3 +643,37 @@ Known-good source build commit:
 
 Next validation:
 Run `baseline_playback_seek_v1` on the physical device and export the ZIP regardless of PASS or FAIL.
+
+
+---
+
+# v0.2.0 INSPECTION CONTROLS GUIDED TEST
+
+## Test ID
+
+`inspection_controls_v2`
+
+The v0.2.0 guided test performs a baseline regression plus the new inspection controls:
+
+1. Open video — Media3 reaches READY.
+2. Play — `isPlaying=true` and media position advances.
+3. Pause — `isPlaying=false`.
+4. Live scrub — preview seek is requested and a frame renders while the slider is still being dragged.
+5. Pinch zoom — uniform X/Y scale reaches at least 2.0x.
+6. Pan — viewport translation changes by at least 40 px while zoom remains active.
+7. Reset Zoom — zoom returns to 1.0x and X/Y offsets return to zero.
+8. Next frame — estimated one-frame forward timestamp is requested and Media3 confirms the new position.
+9. Previous frame — estimated one-frame backward timestamp is requested and Media3 confirms the new position.
+10. 0.50x playback — Media3 reports 0.50x and media position advances during slow playback.
+
+New diagnostic signals:
+- `ZOOM / VIDEO_TRANSFORM_CHANGED`
+- `ZOOM / RESET_ZOOM_PRESSED`
+- `SEEK / SEEK_SCRUB_PREVIEW_REQUESTED`
+- `SEEK / SCRUB_PREVIEW_FRAME_RENDERED`
+- `FRAME_STEP / NEXT_FRAME_PRESSED`
+- `FRAME_STEP / PREVIOUS_FRAME_PRESSED`
+- `SPEED / SPEED_SELECTED`
+- Media3 playback-parameter, rendered-frame and position-discontinuity callbacks.
+
+Frame stepping in v0.2.0 is best-effort: source capture frame rate is used when available, otherwise a 30 fps fallback interval is used. Exact decoded-frame stepping for long-GOP media may require a deeper decoder/index implementation later.
