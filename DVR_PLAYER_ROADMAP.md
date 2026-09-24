@@ -210,7 +210,7 @@ Requirements:
 
 ---
 
-## 1.3 DVR timeline / seek bar — IN PROGRESS
+## 1.3 DVR timeline / seek bar — WORKING
 
 Requirements:
 - Large, easy-to-grab seek bar.
@@ -240,7 +240,7 @@ Exact UI may be refined after phone testing.
 
 ---
 
-## 1.5 Frame stepping — IN PROGRESS
+## 1.5 Frame stepping — WORKING
 
 Requirements:
 - When paused, step backward approximately one frame.
@@ -257,7 +257,7 @@ Use cases:
 
 # PHASE 2 — PLAYBACK SPEED AND DVR SCANNING
 
-## 2.1 Slow playback — IN PROGRESS
+## 2.1 Slow playback — WORKING
 
 Target speeds:
 - 0.10x
@@ -270,7 +270,7 @@ Useful inspection of short actions without manually stepping every frame.
 
 ---
 
-## 2.2 Normal accelerated playback — PLANNED
+## 2.2 Normal accelerated playback — IN PROGRESS
 
 Target speeds:
 - 2x
@@ -285,7 +285,7 @@ Audio behavior:
 
 ---
 
-## 2.3 DVR-style forward scan — PLANNED
+## 2.3 DVR-style forward scan — IN PROGRESS
 
 Target scan rates:
 - 8x
@@ -310,7 +310,7 @@ Display the current mode clearly, for example:
 
 ---
 
-## 2.4 DVR-style reverse scan — PLANNED
+## 2.4 DVR-style reverse scan — IN PROGRESS
 
 Target scan rates:
 - 2x reverse
@@ -331,7 +331,7 @@ A usable security-DVR-style rewind experience, not necessarily literal reverse d
 
 ---
 
-## 2.5 Adaptive scan performance — PLANNED
+## 2.5 Adaptive scan performance — IN PROGRESS
 
 The player should adjust how many frames it displays during high-speed scanning based on:
 - source frame rate,
@@ -347,7 +347,7 @@ Responsiveness over trying to render impossible frame rates.
 
 # PHASE 3 — PINCH ZOOM AND PAN
 
-## 3.1 Pinch-to-zoom — IN PROGRESS
+## 3.1 Pinch-to-zoom — WORKING
 
 Requirements:
 - Two-finger pinch in/out.
@@ -382,7 +382,7 @@ The app must NOT:
 
 ---
 
-## 3.3 Pan while zoomed — IN PROGRESS
+## 3.3 Pan while zoomed — WORKING
 
 Requirements:
 - Drag the enlarged video to inspect a different area.
@@ -392,7 +392,7 @@ Requirements:
 
 ---
 
-## 3.4 Reset zoom — IN PROGRESS
+## 3.4 Reset zoom — WORKING
 
 Provide a fast control to return to:
 - 1.0x zoom
@@ -1014,8 +1014,9 @@ When the user introduces a new feature idea:
 
 # CURRENT ROADMAP CHECKPOINT
 
-**Date:** 2026-09-23  
-**State:** v0.1.0 baseline guided test PASSed on the physical Android device on 2026-09-24. Phase 0 diagnostic infrastructure is confirmed DONE. Local video opening is WORKING. Main playback and timeline remain PARTIAL because broader planned behavior such as live-frame scrubbing, frame stepping, jump controls, and other roadmap items are not yet complete.  
-**Known-good baseline:** v0.1.0 physical-device guided test PASS  
-**Latest device test report:** `test_reports/DVR_Player_v0.1.0_device_guided_test_2026-09-24.txt`  
-**Next action:** Compile and run the v0.2.0 Android Studio candidate, then run `inspection_controls_v2` and upload the diagnostic ZIP. The v0.1.0 baseline remains the recovery point until v0.2.0 passes.
+**Date:** 2026-09-24  
+**State:** v0.2.0 passed all 10 inspection-controls guided-test steps on the physical Android device with no recorded errors/crashes. v0.2.0 is the known-good recovery baseline. v0.3.0 source candidate adds frame counter, press-and-hold repeated frame stepping, scrollable controls/diagnostics, 2x/4x playback, and 8x-64x forward/reverse DVR scanning.  
+**Known-good baseline:** v0.2.0 physical-device guided test PASS  
+**Latest confirmed report:** `test_reports/DVR_Player_v0.2.0_device_guided_test_2026-09-24.txt`  
+**Current candidate:** v0.3.0 Android Studio ZIP  
+**Next action:** Compile v0.3.0, run `dvr_review_v3`, and upload the diagnostic ZIP. Object tracking remains next after v0.3 high-speed review is confirmed.
