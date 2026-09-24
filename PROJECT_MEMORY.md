@@ -6,7 +6,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 
 **Repository:** auxz2jz/Slot-9  
 **Project:** Android DVR Video Player  
-**Current planned version:** v0.1.0  
+**Current planned version:** v0.2.0  
 **Status:** Planning / pre-code  
 **Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
@@ -179,7 +179,7 @@ If an implementation requires a major architecture change, record the reason bef
 **Playback foundation:** AndroidX Media3 / ExoPlayer  
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
-**Current version:** v0.1.0 planned  
+**Current version:** v0.2.0 development  
 **Last known working version:** v0.1.0 GitHub-built APK — user confirmed working on physical Android phone  
 **Build status:** v0.1.0 debug APK compiles successfully in GitHub CI and the baseline guided diagnostic test has PASSed on the user's physical Android phone  
 **Current phase:** Playback foundation + guided testing/diagnostics — source checkpoint built
@@ -190,43 +190,50 @@ If an implementation requires a major architecture change, record the reason bef
 
 ## User Request
 
-Begin the Android DVR player and implement a permanent guided testing and diagnostic system. Every new feature must have an on-screen test procedure. Diagnostics must record enough objective state and interaction information to determine whether the feature actually worked, and the user must be able to export/download the results and upload them for analysis.
+Continue to the next DVR Video Player version after the successful v0.1.0 physical-device guided test.
 
 ## Goal
 
-Create the v0.1.0 Android foundation together with a reusable self-verifying test harness and downloadable diagnostic package system before expanding playback features.
+Build v0.2.0 as the inspection-controls release while preserving the confirmed v0.1.0 playback/diagnostic baseline.
 
 ## Implementation Plan
 
-1. Add `TESTING_DIAGNOSTICS.md` as the permanent testing/diagnostic specification.
-2. Update the roadmap so diagnostics/testing are required across every phase.
-3. Initialize the Android/Kotlin/Compose project.
-4. Use AndroidX Media3/ExoPlayer for playback.
-5. Add structured event logging for user actions and player state callbacks.
-6. Add device, application and media diagnostics.
-7. Add an on-screen guided test runner whose steps advance only after objective app signals confirm the requested action.
-8. Implement the first baseline guided test: Open Video -> Play -> Pause -> Seek.
-9. Export one ZIP diagnostic package containing summary, device info, media info, structured event log and guided-test results.
-10. Preserve the original video and keep diagnostics local/offline.
-11. Commit source as v0.1.0 development checkpoint. It is not marked DONE until built and tested on the user's device.
+1. Start from the Android Studio-ready v0.1.0 known-good project in a local working directory.
+2. Preserve the Media3 playback/file-picker/diagnostic behavior already proven on-device.
+3. Add live video-frame updates while the timeline is actively scrubbed.
+4. Add uniform pinch-to-zoom with aspect ratio preserved.
+5. Add pan while zoomed, with sensible translation limits.
+6. Add Reset Zoom to return to 1.0x and centered view.
+7. Add previous/next frame stepping while paused using source frame-rate metadata where available, with a safe fallback.
+8. Add slow playback controls for 0.10x, 0.25x, 0.50x and 1.00x.
+9. Add diagnostic events for zoom, pan, reset, frame stepping, slow-speed selection and live scrubbing.
+10. Extend guided testing so v0.2.0 can objectively verify the new inspection controls.
+11. Package an Android Studio-ready ZIP.
+12. Save the important v0.2.0 checkpoint and test plan to GitHub; use CI only as independent compile verification.
 
 ## Files Expected to Change
 
-- `PROJECT_MEMORY.md`
-- `DVR_PLAYER_ROADMAP.md`
-- `TESTING_DIAGNOSTICS.md`
-- Android project/Gradle files
-- player UI/source files
-- diagnostics source files
-- guided testing source files
+- local Android Studio project source
+- app/build.gradle.kts version fields
+- DvrPlayerApp.kt
+- GuidedTestController.kt
+- diagnostic/export files if needed
+- TESTING_DIAGNOSTICS.md
+- DVR_PLAYER_ROADMAP.md
+- PROJECT_MEMORY.md
+- README.md
 
 ## Files That Should NOT Be Changed
 
-No unrelated repositories or projects. Slot-9 remains dedicated to the DVR Video Player.
+- The confirmed v0.1.0 source checkpoint/history and test reports must remain preserved.
+- No unrelated repositories.
 
 ---
 
 # WORK IN PROGRESS
+
+- v0.2.0 started from the confirmed v0.1.0 Android Studio project.
+- v0.1.0 remains the recovery baseline and must not be overwritten.
 
 - GitHub slot search completed.
 - Slot-8 is occupied.
