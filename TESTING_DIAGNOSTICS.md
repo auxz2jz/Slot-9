@@ -624,12 +624,22 @@ For every new feature commit/checkpoint:
 
 **Date:** 2026-09-23  
 **Version:** v0.1.0 development  
-**Status:** Specification created; implementation in progress.
+**Status:** Source implementation compiled successfully in GitHub CI; physical-device validation pending.
 
-Initial implementation target:
-- session/event logger,
+Implemented in v0.1.0 source:
+- session-specific JSONL event logger,
+- button/action and Media3 callback logging,
 - device/app collector,
 - media metadata collector,
-- baseline guided test,
-- ZIP exporter,
-- on-screen test instructions.
+- baseline self-verifying guided test,
+- periodic player-state samples during tests,
+- local ZIP exporter,
+- persisted uncaught-crash record plus crashed-session event trail,
+- on-screen test instructions and PASS/FAIL state,
+- CI compile verification.
+
+Known-good source build commit:
+`9d9f560ff49d2798f7b80d4afaa71e233cfafe89`
+
+Next validation:
+Run `baseline_playback_seek_v1` on the physical device and export the ZIP regardless of PASS or FAIL.
