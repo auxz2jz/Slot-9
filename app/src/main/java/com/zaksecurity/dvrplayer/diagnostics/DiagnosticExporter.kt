@@ -25,6 +25,9 @@ object DiagnosticExporter {
 
         output.use { raw ->
             ZipOutputStream(raw).use { zip ->
+                val crashText =
+                    logger.lastCrashText()
+
                 putText(
                     zip,
                     "README.txt",
@@ -33,10 +36,12 @@ object DiagnosticExporter {
 
                     This package was created locally after the user explicitly chose an export destination.
                     It does not contain the source video.
-                    Read summary.txt first, then events.jsonl for the detailed event timeline.
+                    Read summary.txt first, then events.jsonl for the detailed current-session event timeline.
+                    If previous_crash.json exists, previous_crashed_session_events.jsonl contains the event trail that led to that crash.
 
                     sessionId=${logger.sessionId}
                     sessionLabel=${logger.sessionLabel}
+                    currentEventFile=${logger.currentEventFileName()}
                     exportedUtc=${Instant.now()}
                     """.trimIndent() + "\n"
                 )
@@ -47,6 +52,9 @@ object DiagnosticExporter {
                     buildString {
                         appendLine("sessionId=${logger.sessionId}")
                         appendLine("sessionLabel=${logger.sessionLabel}")
+                        appendLine(
+                            "currentEventFile=${logger.currentEventFileName()}"
+                        )
                         appendLine("exportedUtc=${Instant.now()}")
                         append(testController.summaryText())
                         appendLine(
@@ -55,6 +63,9 @@ object DiagnosticExporter {
                         appendLine(
                             "device=${deviceInfo["manufacturer"].orEmpty()} " +
                                 deviceInfo["model"].orEmpty()
+                        )
+                        appendLine(
+                            "previousCrashPresent=${crashText.isNotBlank()}"
                         )
                     }
                 )
@@ -80,13 +91,36 @@ object DiagnosticExporter {
                     testController.resultsJson()
                 )
 
-                val errors = logger.errorLines()
+                val errors =
+                    logger.errorLines()
+
                 if (errors.isNotBlank()) {
                     putText(
                         zip,
                         "errors.txt",
                         errors + "\n"
                     )
+                }
+
+                if (crashText.isNotBlank()) {
+                    putText(
+                        zip,
+                        "previous_crash.json",
+                        crashText + "\n"
+                    )
+
+                    val crashedSessionEvents =
+                        logger.crashedSessionEventsText()
+
+                    if (
+                        crashedSessionEvents.isNotBlank()
+                    ) {
+                        putText(
+                            zip,
+                            "previous_crashed_session_events.jsonl",
+                            crashedSessionEvents
+                        )
+                    }
                 }
             }
         }
@@ -98,7 +132,9 @@ object DiagnosticExporter {
         text: String
     ) {
         zip.putNextEntry(ZipEntry(name))
-        zip.write(text.toByteArray(Charsets.UTF_8))
+        zip.write(
+            text.toByteArray(Charsets.UTF_8)
+        )
         zip.closeEntry()
     }
 }
