@@ -237,6 +237,7 @@ Build v0.2.0 as the inspection-controls release while preserving the confirmed v
 - v0.2.0 Android Studio source candidate packaged with live scrubbing, zoom/pan, Reset Zoom, approximate frame stepping, slow speeds, and inspection_controls_v2 diagnostics.
 - Local XML/manifest and syntax-oriented checks passed; full Gradle compile is pending because the local environment lacks Android SDK/network dependency access.
 - Android Studio ZIP handoff prepared for user compilation and physical-device guided testing.
+- First v0.2.0 Android Studio compile reached Kotlin compilation and exposed only a wrong `clipToBounds` import; corrected ZIP generated.
 
 - GitHub slot search completed.
 - Slot-8 is occupied.
@@ -325,6 +326,17 @@ Use only these status labels in the roadmap:
 ---
 
 # ERROR LOG
+
+## Error — v0.2.0 clipToBounds import
+
+- Date: 2026-09-24
+- Version: v0.2.0 development
+- Feature: Zoom/pan video viewport clipping
+- Exact symptom/error: Android Studio `:app:compileDebugKotlin` reported unresolved reference `clipToBounds` at the import and modifier call in `DvrPlayerApp.kt`.
+- Cause: `clipToBounds` was imported from `androidx.compose.foundation`; the modifier belongs to `androidx.compose.ui.draw`.
+- Fix: changed the import to `androidx.compose.ui.draw.clipToBounds`.
+- Result: corrected v0.2.0 Android Studio ZIP generated; Android Studio rebuild is the next verification.
+- Lesson: preserve the Compose UI draw import for `clipToBounds` in this dependency set.
 
 ## Error — CI environment/setup sequence
 
