@@ -6,7 +6,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 
 **Repository:** auxz2jz/Slot-9  
 **Project:** Android DVR Video Player  
-**Current planned version:** v0.2.0  
+**Current planned version:** v0.3.0  
 **Status:** Planning / pre-code  
 **Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
@@ -179,10 +179,10 @@ If an implementation requires a major architecture change, record the reason bef
 **Playback foundation:** AndroidX Media3 / ExoPlayer  
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
-**Current version:** v0.2.0 development  
-**Last known working version:** v0.1.0 GitHub-built APK — user confirmed working on physical Android phone  
-**Build status:** v0.1.0 debug APK compiles successfully in GitHub CI and the baseline guided diagnostic test has PASSed on the user's physical Android phone  
-**Current phase:** Playback foundation + guided testing/diagnostics — source checkpoint built
+**Current version:** v0.3.0 development  
+**Last known working version:** v0.2.0 — physical-device guided test PASS
+**Build status:** v0.2.0 confirmed on physical device; v0.3.0 Android Studio source candidate packaged and awaiting Android Studio compile/device test
+**Current phase:** DVR high-speed review + frame navigation improvements
 
 ---
 
@@ -190,47 +190,51 @@ If an implementation requires a major architecture change, record the reason bef
 
 ## User Request
 
-Continue to the next DVR Video Player version after the successful v0.1.0 physical-device guided test.
+Continue to the next version after v0.2.0 passed. Add a visible frame counter, allow previous/next frame buttons to repeat slowly while held, make the controls/diagnostic section scrollable as the UI grows, and proceed to the next roadmap feature.
 
 ## Goal
 
-Build v0.2.0 as the inspection-controls release while preserving the confirmed v0.1.0 playback/diagnostic baseline.
+Build v0.3.0 as the DVR high-speed review release while preserving v0.2.0 as the known-good recovery baseline.
 
 ## Implementation Plan
 
-1. Start from the Android Studio-ready v0.1.0 known-good project in a local working directory.
-2. Preserve the Media3 playback/file-picker/diagnostic behavior already proven on-device.
-3. Add live video-frame updates while the timeline is actively scrubbed.
-4. Add uniform pinch-to-zoom with aspect ratio preserved.
-5. Add pan while zoomed, with sensible translation limits.
-6. Add Reset Zoom to return to 1.0x and centered view.
-7. Add previous/next frame stepping while paused using source frame-rate metadata where available, with a safe fallback.
-8. Add slow playback controls for 0.10x, 0.25x, 0.50x and 1.00x.
-9. Add diagnostic events for zoom, pan, reset, frame stepping, slow-speed selection and live scrubbing.
-10. Extend guided testing so v0.2.0 can objectively verify the new inspection controls.
+1. Use v0.2.0 physical-device PASS as the recovery baseline.
+2. Add a visible current/total frame counter derived from media position and the best available frame rate.
+3. Improve frame-rate selection by preferring the selected Media3 video track's reported frame rate when available, with metadata/fallback behavior preserved.
+4. Keep single-tap previous/next frame stepping.
+5. Add press-and-hold repeated frame stepping with a slow repeat cadence and diagnostics.
+6. Make the controls and diagnostic/test area vertically scrollable while keeping the video viewport independently usable for pan/zoom.
+7. Add true Media3 playback at 2x and 4x.
+8. Add DVR-style forward scan at 8x, 16x, 32x and 64x using repeated seeks/frame skipping.
+9. Add DVR-style reverse scan at 8x, 16x, 32x and 64x using repeated backward seeks.
+10. Add v0.3 guided diagnostics that verify single-frame step, held-frame stepping, 2x, 4x, forward scan and reverse scan.
 11. Package an Android Studio-ready ZIP.
-12. Save the important v0.2.0 checkpoint and test plan to GitHub; use CI only as independent compile verification.
+12. Keep v0.2.0 as the known-good fallback until v0.3.0 compiles and passes on the physical device.
 
 ## Files Expected to Change
 
-- local Android Studio project source
-- app/build.gradle.kts version fields
+- local Android Studio source
+- app/build.gradle.kts version
 - DvrPlayerApp.kt
 - GuidedTestController.kt
-- diagnostic/export files if needed
-- TESTING_DIAGNOSTICS.md
-- DVR_PLAYER_ROADMAP.md
-- PROJECT_MEMORY.md
 - README.md
+- PROJECT_MEMORY.md
+- DVR_PLAYER_ROADMAP.md
+- TESTING_DIAGNOSTICS.md
+- v0.3 source-candidate test report
 
 ## Files That Should NOT Be Changed
 
-- The confirmed v0.1.0 source checkpoint/history and test reports must remain preserved.
-- No unrelated repositories.
+- v0.1.0 and v0.2.0 known-good reports/checkpoints
+- unrelated repositories
 
 ---
 
 # WORK IN PROGRESS
+
+- v0.2.0 physical-device guided test PASS is now the known-good recovery baseline.
+- v0.3.0 local source candidate adds frame counter, press-and-hold frame stepping, scrollable controls/diagnostics, 2x/4x playback and 8x-64x forward/reverse DVR scan.
+- v0.3.0 Android Studio-ready ZIP packaged; Android Studio compile and physical-device `dvr_review_v3` test are pending.
 
 - v0.2.0 started from the confirmed v0.1.0 Android Studio project.
 - v0.1.0 remains the recovery baseline and must not be overwritten.
@@ -259,15 +263,13 @@ Build v0.2.0 as the inspection-controls release while preserving the confirmed v
 
 # CURRENT KNOWN GOOD STATE
 
-**Version:** v0.1.0 source checkpoint  
-**Commit:** 9d9f560ff49d2798f7b80d4afaa71e233cfafe89  
-**Status:** CI BUILD PASS; physical-device baseline guided test PASS  
-**Confirmed:** Android debug APK builds successfully in GitHub Actions and is published as the `DVR-Video-Player-v0.1.0-debug` artifact.  
-**Implemented in source:** local video selection, Media3 playback surface, play/pause, seek bar, time display, structured diagnostics, device/media collection, guided baseline test, ZIP export, persisted crash diagnostics.  
-**User confirmed:** the GitHub-built APK was used on the physical Android phone and worked.
-**Formally confirmed by diagnostics:** local media opening, Media3 preparation/rendering, Play, Pause, Seek, guided-test result capture, structured event logging, and diagnostic ZIP export.
+**Version:** v0.2.0  
+**Status:** Physical-device guided test PASS  
+**Confirmed:** v0.1 baseline playback plus live scrub, pinch zoom, pan, Reset Zoom, single previous/next frame stepping, slow playback, diagnostics and ZIP export.  
+**Latest confirmed report:** `test_reports/DVR_Player_v0.2.0_device_guided_test_2026-09-24.txt`  
+**Known limitation discovered:** v0.2 frame stepping used a 30 fps fallback on the tested MKV because the older metadata path did not expose frame rate. v0.3 adds selected Media3 video-track frame-rate detection when available.
 
-The tested v0.1.0 baseline features may now be treated as confirmed. Keep broader Phase 1 status PARTIAL until remaining planned features such as live-frame scrubbing, jump controls, and frame stepping are implemented and tested.
+v0.2.0 remains the recovery point until v0.3.0 compiles and `dvr_review_v3` passes on the physical device.
 
 ---
 
@@ -497,12 +499,14 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. User opens the v0.2.0 Android Studio ZIP and completes Gradle sync/build.
-2. Install/run v0.2.0 on the physical Android device.
-3. Tap **v0.2 Test** and follow the on-screen inspection_controls_v2 steps.
-4. Export the diagnostic ZIP whether PASS or FAIL and upload the latest export.
-5. Analyze the diagnostic package and fix any compile/device-specific issue before marking v0.2.0 features DONE.
-6. Keep v0.1.0 as the known-good recovery baseline until v0.2.0 passes.
+1. User opens the v0.3.0 Android Studio ZIP and compiles it.
+2. If compilation fails, analyze the exact Android Studio build output and make a targeted fix.
+3. If it builds, install/run v0.3.0 on the physical Android device.
+4. Run **v0.3 Test** / `dvr_review_v3`.
+5. Test the visible frame counter and press-and-hold previous/next frame controls.
+6. Test 2x/4x playback and 16x forward/reverse DVR scan as guided.
+7. Export the latest diagnostic ZIP whether PASS or FAIL and upload it.
+8. Only after diagnostic review mark v0.3 features DONE and proceed to target selection/object tracking.
 
 ---
 
