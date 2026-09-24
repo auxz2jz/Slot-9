@@ -34,6 +34,26 @@ If these steps have not been completed, coding has not started correctly.
 
 ---
 
+# DEVELOPMENT DELIVERY WORKFLOW
+
+Active development should normally be performed in a local project workspace rather than by writing every source file through GitHub.
+
+Default workflow:
+
+1. Read the permanent project documents.
+2. Record the plan before coding.
+3. Develop/edit in the local working project.
+4. Build/check locally where practical.
+5. Deliver an Android Studio-ready ZIP to the user.
+6. Save important checkpoints, roadmap changes, test reports, known-good states and recovery information to GitHub.
+7. Use GitHub Actions CI when independent compile verification or reproducible APK generation is useful.
+
+GitHub is the durable project memory/checkpoint repository, not a mandatory active editing environment.
+
+See `BUILD_WORKFLOW.md` for the complete procedure.
+
+---
+
 # GOLDEN WORKFLOW
 
 Always work in this order:
