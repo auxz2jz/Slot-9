@@ -50,7 +50,7 @@ Default workflow:
 
 GitHub is the durable project memory/checkpoint repository, not a mandatory active editing environment.
 
-See `BUILD_WORKFLOW.md` for the complete procedure.
+See `BUILD_WORKFLOW.md` for the normal development workflow and `GITHUB_APK_BUILD_PROCESS.md` for the exact source-to-APK GitHub build process used for v0.1.0.
 
 ---
 
@@ -180,8 +180,8 @@ If an implementation requires a major architecture change, record the reason bef
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
 **Current version:** v0.1.0 planned  
-**Last known working version:** None yet — pre-code  
-**Build status:** v0.1.0 debug APK compiles successfully in GitHub CI; on-device guided validation pending  
+**Last known working version:** v0.1.0 GitHub-built APK — user confirmed working on physical Android phone  
+**Build status:** v0.1.0 debug APK compiles successfully in GitHub CI and has been installed/run successfully on the user's physical Android phone; full guided diagnostic validation is still pending  
 **Current phase:** Playback foundation + guided testing/diagnostics — source checkpoint built
 
 ---
@@ -241,7 +241,8 @@ No unrelated repositories or projects. Slot-9 remains dedicated to the DVR Video
 - Android project foundation, Media3 playback screen, diagnostic event logger, device/media collectors, guided-test controller, crash persistence, ZIP exporter and CI workflow are committed.
 - GitHub CI run 9 compiled successfully after removing an incompatible explicit Compose weight import.
 - GitHub CI run 10 compiled successfully and published the debug APK artifact `DVR-Video-Player-v0.1.0-debug`.
-- Device behavior has NOT yet been marked DONE; the next proof is the exported on-device guided-test diagnostic ZIP.
+- User later confirmed the GitHub-built v0.1.0 APK installed and worked on the physical Android phone.
+- Full guided diagnostic validation is still pending; a general 'worked' confirmation does not replace the structured guided-test ZIP.
 
 ---
 
@@ -249,10 +250,11 @@ No unrelated repositories or projects. Slot-9 remains dedicated to the DVR Video
 
 **Version:** v0.1.0 source checkpoint  
 **Commit:** 9d9f560ff49d2798f7b80d4afaa71e233cfafe89  
-**Status:** CI BUILD PASS; device validation pending  
+**Status:** CI BUILD PASS; user-confirmed physical-device install/run success; structured guided validation pending  
 **Confirmed:** Android debug APK builds successfully in GitHub Actions and is published as the `DVR-Video-Player-v0.1.0-debug` artifact.  
 **Implemented in source:** local video selection, Media3 playback surface, play/pause, seek bar, time display, structured diagnostics, device/media collection, guided baseline test, ZIP export, persisted crash diagnostics.  
-**Not yet confirmed:** installation/launch/playback/seek/export behavior on the user's physical Android device.
+**User confirmed:** the GitHub-built APK was used on the physical Android phone and worked.
+**Still not formally confirmed by diagnostics:** the complete guided Open/Play/Pause/Seek test and diagnostic ZIP review.
 
 Do not mark the user-facing v0.1.0 features DONE until the guided test is run on-device and its exported diagnostic ZIP is reviewed.
 
