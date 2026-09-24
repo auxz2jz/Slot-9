@@ -1,0 +1,31 @@
+DVR VIDEO PLAYER — v0.2.0 SOURCE CANDIDATE
+Date: 2026-09-24
+Repository: auxz2jz/Slot-9
+Base: v0.1.0 physical-device guided-test PASS
+
+NEW SOURCE FEATURES
+- live video-frame preview while dragging the timeline
+- TextureView-backed Media3 PlayerView for zoom/pan transforms
+- uniform pinch zoom from 1x to 8x
+- pan while zoomed with viewport clamping
+- Reset Zoom
+- approximate previous/next frame stepping
+- slow playback controls: 0.10x, 0.25x, 0.50x, 1.00x
+- v0.2 guided test ID: inspection_controls_v2
+- diagnostics for zoom, pan, live scrubbing, frame stepping and speed changes
+
+LOCAL VALIDATION COMPLETED
+- Android resource XML parsed successfully
+- AndroidManifest parsed successfully
+- Kotlin files passed syntax-oriented parsing; unresolved Android/Compose symbols are expected without Android SDK classpath
+- Android Studio ZIP integrity test passed with no compressed-data errors
+- Gradle Wrapper remains included
+
+LOCAL BUILD LIMITATION
+The local execution environment did not have the Android SDK and could not download Gradle/dependencies because outbound network resolution is unavailable. A full Gradle assembleDebug build was therefore not completed locally.
+
+STATUS
+SOURCE CANDIDATE — ANDROID STUDIO COMPILE + DEVICE TEST REQUIRED
+
+RECOVERY RULE
+v0.1.0 remains the known-good fallback until v0.2.0 compiles and inspection_controls_v2 passes on the physical device.
