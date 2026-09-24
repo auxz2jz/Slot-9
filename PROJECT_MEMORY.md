@@ -217,6 +217,7 @@ No unrelated repositories or projects. Slot-9 remains dedicated to the DVR Video
 - New requirement: guided self-verifying tests and downloadable diagnostics for every feature.
 - Testing/diagnostic architecture is being added before the first playback build.
 - Android v0.1.0 source initialization is now authorized.
+- First batch source-write attempt failed before any source files were written due to orchestration quoting; failure recorded in Error Log and implementation method changed.
 
 ---
 
@@ -287,7 +288,14 @@ Use only these status labels in the roadmap:
 
 # ERROR LOG
 
-No errors yet.
+## Error — source batch generation quoting failure
+- Date: 2026-09-23
+- Version: v0.1.0 development
+- Feature: Initial source creation
+- Exact symptom/error: JavaScript orchestration parser reported "SyntaxError: Unexpected token ':'" before any GitHub source-file writes executed.
+- Cause: Kotlin source contained \${...} string templates inside JavaScript template literals, causing the orchestration script to parse Kotlin interpolation as JavaScript.
+- Result: No Android source files were created by the failed batch; documentation checkpoint remained intact.
+- Follow-up: Stop using a single large JavaScript template-literal batch. Create source files using interpolation-safe encoded strings/smaller atomic commits and verify after creation.
 
 When an important error occurs, record:
 
