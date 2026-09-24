@@ -8,7 +8,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 **Project:** Android DVR Video Player  
 **Current planned version:** v0.1.0  
 **Status:** Planning / pre-code  
-**Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) current source code and saved test reports, 4) conversation history.
+**Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
 The project must remain understandable and recoverable even if the chat history disappears.
 
@@ -20,14 +20,15 @@ Before doing any work on this project, the developer/agent MUST:
 
 1. Read this entire file.
 2. Read `DVR_PLAYER_ROADMAP.md`.
-3. Inspect the current project version and the files relevant to the requested change.
-4. Read the latest test report and known-good checkpoint if they exist.
-5. Review current known bugs and failed approaches.
-6. Update the **Current Task** section below with the new request.
-7. Write the intended implementation plan BEFORE editing code.
-8. Identify the files expected to change.
-9. Preserve the last known working state before risky changes.
-10. Only then begin implementation.
+3. Read `TESTING_DIAGNOSTICS.md`.
+4. Inspect the current project version and the files relevant to the requested change.
+5. Read the latest test/diagnostic report and known-good checkpoint if they exist.
+6. Review current known bugs and failed approaches.
+7. Update the **Current Task** section below with the new request.
+8. Write the intended implementation plan BEFORE editing code.
+9. Identify the files expected to change.
+10. Preserve the last known working state before risky changes.
+11. Only then begin implementation.
 
 If these steps have not been completed, coding has not started correctly.
 
@@ -160,8 +161,8 @@ If an implementation requires a major architecture change, record the reason bef
 **Repository:** auxz2jz/Slot-9  
 **Current version:** v0.1.0 planned  
 **Last known working version:** None yet — pre-code  
-**Build status:** No Android project committed yet  
-**Current phase:** Architecture and roadmap approval
+**Build status:** Android v0.1.0 source initialization in progress; device build not yet verified  
+**Current phase:** Playback foundation + guided testing/diagnostics
 
 ---
 
@@ -169,29 +170,39 @@ If an implementation requires a major architecture change, record the reason bef
 
 ## User Request
 
-Create the project memory/instruction system and the DVR Video Player roadmap before coding. Store both in the next empty GitHub slot and use them as permanent project references.
+Begin the Android DVR player and implement a permanent guided testing and diagnostic system. Every new feature must have an on-screen test procedure. Diagnostics must record enough objective state and interaction information to determine whether the feature actually worked, and the user must be able to export/download the results and upload them for analysis.
 
 ## Goal
 
-Establish durable project instructions, anti-loop safeguards, checkpoint rules, and a full roadmap containing all DVR player ideas discussed before implementation begins.
+Create the v0.1.0 Android foundation together with a reusable self-verifying test harness and downloadable diagnostic package system before expanding playback features.
 
 ## Implementation Plan
 
-1. Use the first unused GitHub slot.
-2. Create this mandatory project-memory file.
-3. Create `DVR_PLAYER_ROADMAP.md`.
-4. Record the initial Android architecture and feature roadmap.
-5. Present both files for review.
-6. Do not begin application code until these planning files are reviewed.
+1. Add `TESTING_DIAGNOSTICS.md` as the permanent testing/diagnostic specification.
+2. Update the roadmap so diagnostics/testing are required across every phase.
+3. Initialize the Android/Kotlin/Compose project.
+4. Use AndroidX Media3/ExoPlayer for playback.
+5. Add structured event logging for user actions and player state callbacks.
+6. Add device, application and media diagnostics.
+7. Add an on-screen guided test runner whose steps advance only after objective app signals confirm the requested action.
+8. Implement the first baseline guided test: Open Video -> Play -> Pause -> Seek.
+9. Export one ZIP diagnostic package containing summary, device info, media info, structured event log and guided-test results.
+10. Preserve the original video and keep diagnostics local/offline.
+11. Commit source as v0.1.0 development checkpoint. It is not marked DONE until built and tested on the user's device.
 
 ## Files Expected to Change
 
-- `PROJECT_MEMORY.md` — permanent working instructions and live project state.
-- `DVR_PLAYER_ROADMAP.md` — feature roadmap and implementation order.
+- `PROJECT_MEMORY.md`
+- `DVR_PLAYER_ROADMAP.md`
+- `TESTING_DIAGNOSTICS.md`
+- Android project/Gradle files
+- player UI/source files
+- diagnostics source files
+- guided testing source files
 
 ## Files That Should NOT Be Changed
 
-None. Repository is being initialized for this project.
+No unrelated repositories or projects. Slot-9 remains dedicated to the DVR Video Player.
 
 ---
 
@@ -202,7 +213,10 @@ None. Repository is being initialized for this project.
 - Slot-9 is the next empty repository and has been selected.
 - Project memory/instructions are being initialized.
 - DVR player roadmap is being initialized.
-- Application source code has not started yet.
+- Initial planning files were approved.
+- New requirement: guided self-verifying tests and downloadable diagnostics for every feature.
+- Testing/diagnostic architecture is being added before the first playback build.
+- Android v0.1.0 source initialization is now authorized.
 
 ---
 
@@ -336,6 +350,23 @@ Exports are new files only.
 
 Frame stacking depends on reliable target tracking and frame alignment. Build those capabilities first.
 
+## D6 — Guided tests are mandatory for new features
+
+Every user-facing feature must have a guided test procedure. The app must tell the tester exactly what to do and record objective internal signals that indicate whether the requested behavior occurred.
+
+A test must not rely only on the tester saying "it worked."
+
+## D7 — Diagnostics are structured and exportable
+
+The app records user actions, relevant player callbacks, timestamps, positions, errors, device/app information and media information. Test results and logs must be exportable as a ZIP package the user can upload for analysis.
+
+Core diagnostics remain local/offline and must not upload automatically.
+
+## D8 — Testing code is reusable infrastructure
+
+Guided tests and diagnostic logging are not temporary debug code. They are a permanent subsystem that future playback, zoom, DVR scan, tracking, Target Lock and frame-stacking tests will reuse.
+
+
 ---
 
 # ARCHITECTURE RECORD
@@ -363,8 +394,14 @@ app/
     enhanced_stills
     stabilized_clips
   diagnostics/
-    test_report
+    event_logger
+    device_info
     media_info
+    diagnostic_export
+  testing/
+    guided_test_controller
+    test_definitions
+    test_results
 ```
 
 This is a planning map, not a requirement to create every file immediately.
@@ -375,11 +412,12 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. User reviews `PROJECT_MEMORY.md`.
-2. User reviews `DVR_PLAYER_ROADMAP.md`.
-3. Apply requested roadmap/instruction changes.
-4. Create the Android v0.1.0 project foundation.
-5. Build and test basic local video playback before advanced features.
+1. Create `TESTING_DIAGNOSTICS.md`.
+2. Initialize Android v0.1.0 source.
+3. Implement baseline playback + diagnostics + guided test.
+4. User builds/runs v0.1.0 on device.
+5. User follows the on-screen baseline guided test and exports the diagnostic ZIP.
+6. Analyze uploaded results and only then mark confirmed features WORKING/DONE.
 
 ---
 
@@ -428,8 +466,9 @@ Development must be recoverable from:
 1. Source code.
 2. `PROJECT_MEMORY.md`.
 3. `DVR_PLAYER_ROADMAP.md`.
-4. Saved test reports.
-5. Git/version checkpoints.
+4. `TESTING_DIAGNOSTICS.md`.
+5. Saved test and diagnostic reports.
+6. Git/version checkpoints.
 
 If losing the conversation would make the next action unclear, the project documentation is not current enough.
 
