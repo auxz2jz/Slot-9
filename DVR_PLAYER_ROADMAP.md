@@ -41,7 +41,7 @@ This roadmap is a permanent source of truth. Before implementing or changing fea
 
 # PHASE 0 — PERMANENT TESTING & DIAGNOSTICS INFRASTRUCTURE
 
-## 0.1 Guided test runner — PARTIAL
+## 0.1 Guided test runner — DONE
 
 Every new user-facing feature must have an in-app guided test.
 
@@ -64,7 +64,7 @@ Each step advances only when corresponding app/player signals confirm it.
 
 ---
 
-## 0.2 Structured event diagnostics — PARTIAL
+## 0.2 Structured event diagnostics — DONE
 
 Record timestamped diagnostic events such as:
 - app/session start,
@@ -87,7 +87,7 @@ Use machine-readable JSON Lines plus a human-readable summary.
 
 ---
 
-## 0.3 Device/application diagnostics — PARTIAL
+## 0.3 Device/application diagnostics — DONE
 
 Capture:
 - app version/build,
@@ -104,7 +104,7 @@ Do not collect unrelated personal data.
 
 ---
 
-## 0.4 Media diagnostics — PARTIAL
+## 0.4 Media diagnostics — DONE
 
 For the opened video record, where available:
 - display name,
@@ -122,7 +122,7 @@ Do not include or upload the video itself unless the user separately chooses to 
 
 ---
 
-## 0.5 Diagnostic ZIP export — PARTIAL
+## 0.5 Diagnostic ZIP export — DONE
 
 A completed or interrupted test session must be exportable as a single ZIP package containing:
 - README/SUMMARY,
@@ -183,7 +183,7 @@ Examples:
 
 # PHASE 1 — CORE DVR PLAYER
 
-## 1.1 Local video opening — PARTIAL
+## 1.1 Local video opening — WORKING
 
 Requirements:
 - Open local video files from Android storage/file picker.
@@ -1015,6 +1015,7 @@ When the user introduces a new feature idea:
 # CURRENT ROADMAP CHECKPOINT
 
 **Date:** 2026-09-23  
-**State:** v0.1.0 source checkpoint compiles successfully in GitHub CI and a debug APK artifact has been produced. Phase 0 and initial Phase 1 features are PARTIAL because physical-device validation is still pending.  
-**Known-good source commit:** `9d9f560ff49d2798f7b80d4afaa71e233cfafe89`  
-**Next action:** Run the in-app baseline Guided Test on the physical Android device and export/upload the diagnostic ZIP.
+**State:** v0.1.0 baseline guided test PASSed on the physical Android device on 2026-09-24. Phase 0 diagnostic infrastructure is confirmed DONE. Local video opening is WORKING. Main playback and timeline remain PARTIAL because broader planned behavior such as live-frame scrubbing, frame stepping, jump controls, and other roadmap items are not yet complete.  
+**Known-good baseline:** v0.1.0 physical-device guided test PASS  
+**Latest device test report:** `test_reports/DVR_Player_v0.1.0_device_guided_test_2026-09-24.txt`  
+**Next action:** Continue from the Android Studio-ready project with the next planned playback/inspection features while preserving the confirmed baseline.
