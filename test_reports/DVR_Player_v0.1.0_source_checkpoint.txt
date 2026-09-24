@@ -1,0 +1,85 @@
+DVR VIDEO PLAYER — v0.1.0 SOURCE CHECKPOINT TEST REPORT
+Date: 2026-09-23 America/Los_Angeles
+Repository: auxz2jz/Slot-9
+Known-good source commit: 9d9f560ff49d2798f7b80d4afaa71e233cfafe89
+
+TEST TYPE
+Automated GitHub CI source/build verification.
+
+ENVIRONMENT
+GitHub-hosted Ubuntu runner
+JDK 17
+Gradle 9.6
+Android compile SDK 36
+Target SDK 36
+Minimum SDK 26
+AndroidX Media3 / ExoPlayer 1.11.1
+Compose dependency set based on BOM 2026.02.01
+
+RESULT
+PASS — debug APK compiled successfully.
+
+Successful run:
+GitHub Actions run 10
+Run ID: 35959205877
+
+Artifact:
+DVR-Video-Player-v0.1.0-debug
+Artifact ID: 10791896652
+Artifact size: 14,540,339 bytes
+Artifact digest:
+sha256:c098818eb02098486889b5920e7cb9db995a4b7261b937ffd769b947d9a4bcfd
+Artifact expiration reported by GitHub: 2026-10-24T05:17:28Z
+
+SOURCE FEATURES PRESENT IN THIS CHECKPOINT
+- Local Android video picker
+- Media3/ExoPlayer playback surface
+- Play/Pause control
+- Timeline seek bar
+- Current/total time display
+- Structured events.jsonl diagnostics
+- Device/app information collection
+- Media metadata collection
+- Baseline guided test:
+  1. Open Video
+  2. Play and confirm actual playback + position advance
+  3. Pause and confirm actual paused state
+  4. Seek and confirm player reaches requested target
+- Local diagnostic ZIP export
+- Test result JSON
+- Human-readable summary
+- Current-session error extraction
+- Uncaught crash persistence
+- Previous crashed-session event-trail export
+
+BUILD FAILURES FOUND AND RESOLVED BEFORE PASS
+1. CI setup action attempted obsolete Android SDK "tools" package.
+2. sdkmanager was not on shell PATH after removing that setup action.
+3. Android API 37 platform package was unavailable to the runner.
+4. Explicit Compose layout.weight import resolved to an internal symbol in the API-36-compatible Compose set.
+
+All four problems were corrected before the successful build.
+
+NOT YET VERIFIED
+The following require the user's physical Android device:
+- APK installation
+- App launch
+- File picker behavior
+- Actual video rendering/audio
+- Play/Pause behavior
+- Seek accuracy
+- Guided-test UI progression
+- Diagnostic ZIP save/export
+- Crash recovery behavior
+
+STATUS
+Source/CI: PASS
+Physical-device behavior: PENDING
+Overall v0.1.0 feature status: PARTIAL
+
+NEXT REQUIRED TEST
+Install/run the debug APK.
+Tap Guided Test.
+Follow the on-screen instructions.
+At PASS or FAIL, export the Test + Diagnostics ZIP.
+Upload the ZIP for analysis.
