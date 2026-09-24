@@ -29,3 +29,11 @@ SOURCE CANDIDATE — ANDROID STUDIO COMPILE + DEVICE TEST REQUIRED
 
 RECOVERY RULE
 v0.1.0 remains the known-good fallback until v0.2.0 compiles and inspection_controls_v2 passes on the physical device.
+
+
+ANDROID STUDIO COMPILE ATTEMPT 1
+- Gradle successfully progressed through Android resource/manifest processing and reached `:app:compileDebugKotlin`.
+- Failure: unresolved `clipToBounds` import/use in `DvrPlayerApp.kt`.
+- Fix: import changed from `androidx.compose.foundation.clipToBounds` to `androidx.compose.ui.draw.clipToBounds`.
+- Corrected Android Studio project ZIP generated.
+- Full compile result after this correction is pending the user's rebuild.
