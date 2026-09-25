@@ -1,0 +1,59 @@
+DVR VIDEO PLAYER — v0.3.1 PHYSICAL DEVICE GUIDED TEST REPORT
+
+Date: 2026-09-25
+Repository: auxz2jz/Slot-9
+App version: 0.3.1
+Test ID: dvr_review_v3
+Session ID: 5062df9b-de48-4e3e-8f6c-d3bbef6e5966
+
+OVERALL RESULT
+PASS — all 8 guided steps passed.
+
+DEVICE
+Samsung SM-S908U1
+Android 16 / API 36
+
+TEST MEDIA
+Star.Trek.Strange.New.Worlds.S04E09.Once.Laan.a.Time.2160p.AMZN.WEB-DL.DDP5.1.H.265-FLUX.mkv
+3840x1600
+Duration: 2,912,201 ms
+Size: 5,569,708,101 bytes
+Video: HEVC
+Frame rate: 23 fps reported by MediaExtractor
+
+GUIDED STEPS
+1. Open media — PASS
+2. Play — PASS
+3. Single frame step — PASS
+4. Held frame advance — PASS
+   Start frame: 61
+   End frame: 78
+   Advanced frames: 17
+   Repeat requests: 17
+5. 2x playback — PASS
+6. 4x playback — PASS
+7. 16x DVR forward scan — PASS
+   Start: 50,907 ms
+   End: 101,227 ms
+   Real elapsed: 3,147 ms
+   Media delta: +50,320 ms
+   Effective rate: 15.9898x
+8. 16x DVR reverse scan — PASS
+   Start: 101,227 ms
+   End: 36,811 ms
+   Real elapsed: 4,085 ms
+   Media delta: -64,416 ms
+   Effective rate: 15.7689x
+
+ERRORS / CRASHES
+None recorded.
+No previous crash was present.
+
+DIAGNOSTIC EXPORTS
+Two uploaded ZIPs share the same session ID and PASS results. The later export simply contains a few extra export events.
+
+CONCLUSION
+v0.3.1 is the new known-good physical-device baseline. High-speed review and frame-navigation features are confirmed working.
+
+NEXT ROADMAP PHASE
+v0.4.0 — manual target selection, blue tracking overlay, local basic tracker, and explicit TRACK LOST behavior.
