@@ -270,7 +270,7 @@ Useful inspection of short actions without manually stepping every frame.
 
 ---
 
-## 2.2 Normal accelerated playback — IN PROGRESS
+## 2.2 Normal accelerated playback — WORKING
 
 Target speeds:
 - 2x
@@ -285,7 +285,7 @@ Audio behavior:
 
 ---
 
-## 2.3 DVR-style forward scan — IN PROGRESS
+## 2.3 DVR-style forward scan — WORKING
 
 Target scan rates:
 - 8x
@@ -310,7 +310,7 @@ Display the current mode clearly, for example:
 
 ---
 
-## 2.4 DVR-style reverse scan — IN PROGRESS
+## 2.4 DVR-style reverse scan — WORKING
 
 Target scan rates:
 - 2x reverse
@@ -331,7 +331,7 @@ A usable security-DVR-style rewind experience, not necessarily literal reverse d
 
 ---
 
-## 2.5 Adaptive scan performance — IN PROGRESS
+## 2.5 Adaptive scan performance — WORKING
 
 The player should adjust how many frames it displays during high-speed scanning based on:
 - source frame rate,
@@ -410,7 +410,7 @@ After positioning a zoomed view, lock it so playback controls can be used withou
 
 # PHASE 4 — MANUAL TARGET SELECTION AND TRACKING
 
-## 4.1 Manual region selection — PLANNED
+## 4.1 Manual region selection — IN PROGRESS
 
 Workflow:
 1. Pause or play video.
@@ -432,7 +432,7 @@ The system must not require the target to belong to a predefined object class.
 
 ---
 
-## 4.2 Blue tracking box — PLANNED
+## 4.2 Blue tracking box — IN PROGRESS
 
 Requirements:
 - Draw a visible blue box around the tracked target.
@@ -443,7 +443,7 @@ Requirements:
 
 ---
 
-## 4.3 Traditional visual tracking — PLANNED
+## 4.3 Traditional visual tracking — IN PROGRESS
 
 Candidate techniques:
 - OpenCV optical flow,
@@ -1014,9 +1014,8 @@ When the user introduces a new feature idea:
 
 # CURRENT ROADMAP CHECKPOINT
 
-**Date:** 2026-09-24  
-**State:** v0.2.0 passed all 10 inspection-controls guided-test steps on the physical Android device with no recorded errors/crashes. v0.2.0 is the known-good recovery baseline. v0.3.0 source candidate adds frame counter, press-and-hold repeated frame stepping, scrollable controls/diagnostics, 2x/4x playback, and 8x-64x forward/reverse DVR scanning.  
-**Known-good baseline:** v0.2.0 physical-device guided test PASS  
-**Latest confirmed report:** `test_reports/DVR_Player_v0.2.0_device_guided_test_2026-09-24.txt`  
-**Current candidate:** v0.3.1 Android Studio ZIP — targeted held-frame bug fix  
-**Next action:** Compile v0.3.1 and rerun `dvr_review_v3`. v0.3.0 passed Open/Play/single-frame but failed held forward frame advance; 2x/4x and DVR scan were not reached. Object tracking remains next only after the v0.3 high-speed review set is confirmed.
+**Date:** 2026-09-25  
+**Known-good baseline:** v0.3.1 physical-device guided test PASS  
+**Confirmed v0.3.1:** frame counter, held frame stepping, 2x/4x playback, 16x forward/reverse DVR scan, scrollable controls, diagnostics.  
+**Current candidate:** v0.4.0 manual target selection + basic local tracking.  
+**Next action:** Compile/install v0.4.0, run `target_tracking_v4`, and upload the latest diagnostic ZIP. Keep v0.3.1 as recovery baseline until v0.4.0 passes.
