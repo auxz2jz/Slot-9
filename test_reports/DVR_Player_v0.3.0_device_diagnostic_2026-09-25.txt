@@ -1,0 +1,66 @@
+DVR VIDEO PLAYER — v0.3.0 PHYSICAL DEVICE DIAGNOSTIC REPORT
+
+Date: 2026-09-25
+Repository: auxz2jz/Slot-9
+App version: 0.3.0
+Test ID: dvr_review_v3
+Session ID: fc30126b-2a36-450f-b42d-671d81b9a9b3
+
+OVERALL RESULT
+FAIL — guided test stopped at held forward frame advance.
+
+DEVICE
+Samsung SM-S908U1
+Android 16 / API 36
+
+TEST MEDIA
+Star.Trek.Strange.New.Worlds.S04E09.Once.Laan.a.Time.2160p.AMZN.WEB-DL.DDP5.1.H.265-FLUX.mkv
+3840x1600
+Duration: 2,912,201 ms
+Size: 5,569,708,101 bytes
+Bitrate reported: 15,300,339 bps
+
+GUIDED STEPS
+1. Open media — PASS
+2. Play — PASS
+3. Single next-frame step — PASS
+4. Press-and-hold forward frame step — FAIL / no actual forward frame advancement
+5. 2x playback — NOT REACHED
+6. 4x playback — NOT REACHED
+7. 16x forward DVR scan — NOT REACHED
+8. 16x reverse DVR scan — NOT REACHED
+
+DIAGNOSTIC ROOT CAUSE
+The hold gesture itself worked. FRAME_HOLD_STARTED and repeated NEXT_FRAME_PRESSED events were recorded.
+
+Example failed hold:
+- start frame: 234
+- repeat requests: 6
+- end frame: 234
+- advanced frames: 0
+
+Repeated forward requests used:
+- current frame 234
+- target frame 235
+- target timestamp 7,833 ms
+
+The player was already at 7,833 ms, so the repeated forward operation kept requesting the same timestamp and could not advance.
+
+A later reverse hold did advance from frame 233 to frame 222, confirming that the press-and-hold input/repeat system itself was functional.
+
+FRAME RATE OBSERVATION
+v0.3.0 still used frameRate=30 with frameRateSource=fallback_30fps for this MKV. Neither the previous metadata route nor the selected Media3 track exposed a usable frame rate during this session.
+
+v0.3.1 FIX PLAN
+- calculate target frame timestamps with CEIL rather than rounding so a next-frame timestamp is guaranteed to fall inside the requested frame
+- maintain an independent logical frame cursor during press-and-hold so repeated requests continue advancing even if Media3 seek state updates asynchronously
+- add MediaExtractor / MediaFormat.KEY_FRAME_RATE detection before the 30 fps fallback
+- keep v0.2.0 as the known-good baseline
+- rerun dvr_review_v3 before validating 2x/4x and DVR scan features
+
+ERRORS / CRASHES
+No app errors or crashes were recorded.
+
+STATUS
+v0.3.0: FAILED at hold-frame guided-test step
+v0.3.1: targeted bug-fix candidate required
