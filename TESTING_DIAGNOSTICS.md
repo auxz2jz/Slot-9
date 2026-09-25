@@ -623,8 +623,8 @@ For every new feature commit/checkpoint:
 # CURRENT STATUS
 
 **Date:** 2026-09-23  
-**Version:** v0.4.0 development  
-**Status:** v0.3.1 physical-device guided test PASS; v0.4.0 target-tracking source candidate awaiting Android Studio/device validation.
+**Version:** v0.4.1 development  
+**Status:** v0.4.0 failed physical-device tracking/orientation validation; v0.4.1 corrective candidate awaiting Android Studio/device validation.
 
 Implemented in v0.1.0 source:
 - session-specific JSONL event logger,
@@ -761,3 +761,33 @@ Diagnostic signals:
 - guided test PASS/FAIL events for selection, movement and lost-target behavior.
 
 Initial tracker implementation uses reduced-resolution TextureView frame capture and a local sampled grayscale template search around the prior target position. It is intentionally position-only. Rotation, scale and perspective compensation belong to later tracking/Target Lock work.
+
+
+---
+
+# v0.4.1 CORRECTIVE TARGET TRACKING + ROTATION TEST
+
+## Test ID
+
+`target_tracking_v4_1`
+
+Guided steps:
+
+1. **Open media** — Media3 reaches READY.
+2. **Rotate to landscape** — PASS only if the same media remains loaded/visible and the app does not reset.
+3. **Select target** — user draws and confirms a target; OpenCV MIL initializes.
+4. **Verify real tracking** — play for at least 4 seconds. Objective diagnostics require repeated stable/continuous samples, meaningful movement and no repeated rejected jumps. This step does NOT auto-pass. The tester must press **Tracking Looks Correct** only if the blue box is visibly staying on the actual target. **Tracking Is Wrong** records an explicit failure.
+5. **TRACK LOST** — seek to footage where the target is absent and continue playback until explicit TRACK LOST occurs.
+
+Changed diagnostic signals:
+- `APP / ORIENTATION_STATE` with `mediaStillLoaded`
+- OpenCV MIL raw tracking score
+- appearance histogram similarity
+- per-sample allowed-jump threshold
+- `TRACKING / TRACK_REJECTED_JUMP`
+- `TRACKING / TRACK_NOT_LOCATED`
+- `TEST / TRACKING_IMPLAUSIBLE_JUMP_FOR_TEST`
+- `TEST / TESTER_CONFIRMED_TRACKING_VISUALLY_CORRECT`
+- `TEST / TESTER_REPORTED_TRACKING_VISUALLY_WRONG`
+
+A movement test must never pass solely because a box moved.
