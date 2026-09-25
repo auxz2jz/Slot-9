@@ -248,6 +248,11 @@ Build v0.4.0 as the manual target-selection and basic tracking release while pre
 
 # WORK IN PROGRESS
 
+- v0.4.0 Android Studio-ready ZIP packaged.
+- v0.4.0 adds manual target selection, blue tracking overlay, lightweight local TextureView template tracking, confidence diagnostics and explicit TRACK LOST behavior.
+- Local tracker synthetic-motion test succeeded at approximately 0.87 confidence.
+- Full Android Studio compile and physical-device target_tracking_v4 test are pending.
+
 - v0.3.1 physical-device guided test PASS is now the known-good recovery baseline.
 - v0.4.0 manual target-selection/basic tracking implementation started.
 - Tracking will use the existing TextureView for local displayed-frame capture at reduced resolution; no cloud dependency is required.
@@ -539,14 +544,15 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. User opens the v0.3.1 Android Studio ZIP and compiles it.
-2. If compilation fails, analyze the exact Android Studio build output and make a targeted fix.
-3. If it builds, install/run v0.3.1 on the physical Android device.
-4. Run **v0.3 Test** / `dvr_review_v3`.
-5. Test the visible frame counter and press-and-hold previous/next frame controls.
-6. Test 2x/4x playback and 16x forward/reverse DVR scan as guided.
-7. Export the latest diagnostic ZIP whether PASS or FAIL and upload it.
-8. Only after v0.3.1 diagnostic review mark the v0.3 features DONE and proceed to target selection/object tracking.
+1. User opens the v0.4.0 Android Studio ZIP and compiles it.
+2. If compilation fails, use the exact Android Studio build output for a targeted correction.
+3. If it builds, install/run v0.4.0 on the physical Android device.
+4. Run **v0.4 Test** / `target_tracking_v4`.
+5. Choose a clearly visible moving target, draw the blue target box, Confirm Target, then press Play.
+6. Let the target move until tracking movement passes.
+7. Seek to a very different part where the target is absent and verify explicit **TRACK LOST**.
+8. Export/upload the latest diagnostic ZIP whether PASS or FAIL.
+9. Keep v0.3.1 as the recovery baseline until v0.4.0 passes.
 
 ---
 
