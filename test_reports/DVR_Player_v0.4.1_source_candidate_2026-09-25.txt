@@ -1,0 +1,30 @@
+DVR VIDEO PLAYER — v0.4.1 SOURCE CANDIDATE
+Date: 2026-09-25
+Known-good base: v0.3.1 physical-device PASS
+
+CHANGES
+- official OpenCV Android Maven dependency org.opencv:opencv:5.0.0.1
+- OpenCV TrackerMIL replaces sampled-template tracker
+- 480x270 TextureView analysis capture
+- 150 ms tracking interval
+- coarse target appearance histogram similarity validation
+- implausible jump rejection; rejected teleports are not drawn
+- explicit TRACK LOST after repeated native locate failures or repeated drift
+- movement test requires stable metrics plus tester visual confirmation
+- Tracking Is Wrong button records an explicit failure
+- MainActivity configChanges preserves player/app state through orientation changes
+- landscape video viewport uses flexible height
+- orientation preservation is now a guided-test step
+
+LOCAL CHECKS
+- Android XML parses successfully
+- Kotlin source structural/brace checks pass
+- no stale SimpleTemplateTracker reference remains
+- Android Studio ZIP integrity passes
+- local Gradle build could not run because this execution environment cannot resolve services.gradle.org
+
+STATUS
+ANDROID STUDIO COMPILE + PHYSICAL DEVICE target_tracking_v4_1 REQUIRED
+
+RECOVERY
+v0.3.1 remains the known-good baseline until v0.4.1 passes.
