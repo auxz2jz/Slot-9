@@ -1018,5 +1018,5 @@ When the user introduces a new feature idea:
 **State:** v0.2.0 passed all 10 inspection-controls guided-test steps on the physical Android device with no recorded errors/crashes. v0.2.0 is the known-good recovery baseline. v0.3.0 source candidate adds frame counter, press-and-hold repeated frame stepping, scrollable controls/diagnostics, 2x/4x playback, and 8x-64x forward/reverse DVR scanning.  
 **Known-good baseline:** v0.2.0 physical-device guided test PASS  
 **Latest confirmed report:** `test_reports/DVR_Player_v0.2.0_device_guided_test_2026-09-24.txt`  
-**Current candidate:** v0.3.0 Android Studio ZIP  
-**Next action:** Compile v0.3.0, run `dvr_review_v3`, and upload the diagnostic ZIP. Object tracking remains next after v0.3 high-speed review is confirmed.
+**Current candidate:** v0.3.1 Android Studio ZIP — targeted held-frame bug fix  
+**Next action:** Compile v0.3.1 and rerun `dvr_review_v3`. v0.3.0 passed Open/Play/single-frame but failed held forward frame advance; 2x/4x and DVR scan were not reached. Object tracking remains next only after the v0.3 high-speed review set is confirmed.
