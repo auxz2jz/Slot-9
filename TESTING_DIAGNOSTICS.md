@@ -623,8 +623,8 @@ For every new feature commit/checkpoint:
 # CURRENT STATUS
 
 **Date:** 2026-09-23  
-**Version:** v0.3.1 development  
-**Status:** v0.3.0 physical-device test failed at held forward frame advance; v0.3.1 targeted fix candidate awaiting validation.
+**Version:** v0.4.0 development  
+**Status:** v0.3.1 physical-device guided test PASS; v0.4.0 target-tracking source candidate awaiting Android Studio/device validation.
 
 Implemented in v0.1.0 source:
 - session-specific JSONL event logger,
@@ -734,3 +734,30 @@ The controls/test/diagnostic area below the video is vertically scrollable so la
 The v0.3.0 diagnostic session proved the hold gesture generated repeated requests but forward stepping stalled because the next target frame could map to the same millisecond timestamp as the current frame. v0.3.1 changes the timestamp calculation so a target frame maps to the first millisecond inside that frame and maintains an independent frame cursor during held stepping.
 
 The existing `dvr_review_v3` sequence remains the required test. Do not skip the held-frame step. The 2x, 4x, forward scan and reverse scan steps remain unvalidated until the sequence progresses beyond the repaired hold-frame step.
+
+
+---
+
+# v0.4.0 TARGET TRACKING GUIDED TEST
+
+## Test ID
+
+`target_tracking_v4`
+
+Guided steps:
+
+1. **Open media** — Media3 reaches READY.
+2. **Select target** — tester enters Select Target mode, drags a box, and Confirm Target successfully initializes the tracker.
+3. **Track movement** — while playing, tracker must produce at least 6 confident samples and accumulated normalized box movement of at least 0.015.
+4. **TRACK LOST** — tester seeks to a substantially different part where the selected object is absent; three consecutive low-confidence matches must cause an explicit `TRACK_LOST` event instead of continuing a false track.
+
+Diagnostic signals:
+- `TRACKING / TARGET_SELECTION_STARTED`
+- `TRACKING / TARGET_BOX_DRAWN`
+- `TRACKING / TRACK_TARGET_CONFIRMED`
+- `TRACKING / TRACK_SAMPLE` with normalized box coordinates, confidence, movement and processing time
+- `TRACKING / TRACK_LOW_CONFIDENCE`
+- `TRACKING / TRACK_LOST`
+- guided test PASS/FAIL events for selection, movement and lost-target behavior.
+
+Initial tracker implementation uses reduced-resolution TextureView frame capture and a local sampled grayscale template search around the prior target position. It is intentionally position-only. Rotation, scale and perspective compensation belong to later tracking/Target Lock work.
