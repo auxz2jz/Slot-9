@@ -623,8 +623,8 @@ For every new feature commit/checkpoint:
 # CURRENT STATUS
 
 **Date:** 2026-09-23  
-**Version:** v0.3.0 development  
-**Status:** v0.2.0 physical-device guided test PASS; v0.3.0 source candidate awaiting Android Studio compile/device validation.
+**Version:** v0.3.1 development  
+**Status:** v0.3.0 physical-device test failed at held forward frame advance; v0.3.1 targeted fix candidate awaiting validation.
 
 Implemented in v0.1.0 source:
 - session-specific JSONL event logger,
@@ -727,3 +727,10 @@ The counter is timestamp/frame-rate derived. Variable-frame-rate media and long-
 ## Scrollability Test
 
 The controls/test/diagnostic area below the video is vertically scrollable so later controls remain reachable. This is a usability requirement rather than a numeric guided-test PASS condition; any inability to reach lower controls should be reported and logged as a UI regression.
+
+
+## v0.3.1 Held-Frame Retest Note
+
+The v0.3.0 diagnostic session proved the hold gesture generated repeated requests but forward stepping stalled because the next target frame could map to the same millisecond timestamp as the current frame. v0.3.1 changes the timestamp calculation so a target frame maps to the first millisecond inside that frame and maintains an independent frame cursor during held stepping.
+
+The existing `dvr_review_v3` sequence remains the required test. Do not skip the held-frame step. The 2x, 4x, forward scan and reverse scan steps remain unvalidated until the sequence progresses beyond the repaired hold-frame step.
