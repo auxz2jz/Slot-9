@@ -1,0 +1,42 @@
+DVR VIDEO PLAYER — v0.4.0 SOURCE CANDIDATE
+Date: 2026-09-25
+Repository: auxz2jz/Slot-9
+Known-good base: v0.3.1 physical-device guided-test PASS
+
+NEW FEATURES
+- manual Select Target mode
+- drag-to-select target rectangle directly on video
+- blue target/tracking overlay
+- Confirm Target, Re-select Target and Stop controls
+- local TextureView frame capture at 320x180 analysis resolution
+- sampled grayscale template tracker with bounded local search
+- confidence, bounding-box, movement and processing-time diagnostics
+- explicit TRACK LOST after 3 consecutive low-confidence matches
+- v0.4 guided test ID: target_tracking_v4
+
+GUIDED TEST
+1. Open moving-object footage
+2. Select/confirm target
+3. Play until confident moving tracking is verified
+4. Seek to footage without the target and verify explicit TRACK LOST
+
+VALIDATION COMPLETED
+- v0.3.1 uploaded diagnostics reviewed: all 8 guided steps PASS, no errors/crashes
+- v0.3.1 16x forward effective rate: ~15.99x
+- v0.3.1 16x reverse effective rate: ~15.77x
+- MediaExtractor frame rate on tested MKV: 23 fps
+- SimpleTemplateTracker compiles independently against an Android Bitmap stub
+- synthetic moving-target tracker test succeeded at ~0.87 confidence with correct movement
+- GuidedTestController compiles against minimal stubs
+- DvrPlayerApp Kotlin parse check shows no syntax/local-function-reference red flags
+- Android XML files parse successfully
+- Android Studio ZIP integrity test passed
+
+FULL BUILD LIMITATION
+The local environment does not contain the Android SDK/dependency cache, so a complete assembleDebug build was not performed locally. Android Studio compilation is the next verification step.
+
+STATUS
+SOURCE CANDIDATE — ANDROID STUDIO COMPILE + PHYSICAL DEVICE target_tracking_v4 REQUIRED
+
+RECOVERY RULE
+v0.3.1 remains the known-good fallback until v0.4.0 compiles and target_tracking_v4 passes on the physical device.
