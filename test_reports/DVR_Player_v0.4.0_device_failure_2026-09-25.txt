@@ -1,0 +1,35 @@
+DVR VIDEO PLAYER — v0.4.0 PHYSICAL DEVICE FAILURE REPORT
+
+Date: 2026-09-25
+Known-good fallback: v0.3.1
+
+USER OBSERVATION
+- animal was not actually tracked
+- blue box jumped around the security footage
+- Test 3 incorrectly reported PASS
+- TRACK LOST appeared only after the tester stopped the failed test
+- rotating to landscape made the video disappear/reset the program
+
+DIAGNOSTIC CONFIRMATION
+Session e263f6b5-4d17-44d2-bd4a-e7b57ee32671:
+- 295 TRACK_SAMPLE events
+- mean reported confidence about 0.773
+- maximum normalized jump about 0.183
+- 49 jumps >= 0.08; 11 jumps >= 0.12
+- Track Lost test was manually failed, then TRACK_LOST arrived 3.402 s later
+
+Session 73e0a9e3-e372-4adf-8502-a4b194c1cc27:
+- 183 TRACK_SAMPLE events
+- mean reported confidence about 0.767
+- maximum normalized jump about 0.182
+- 26 jumps >= 0.08 and all 26 >= 0.12
+- Track Lost test was manually failed, then TRACK_LOST arrived 4.229 s later
+
+ROOT CAUSES
+1. sampled-template similarity could score unrelated background patches highly
+2. movement test counted confidence + accumulated box movement, so tracker drift itself satisfied PASS
+3. visible tracker accepted teleport-like jumps
+4. MainActivity lacked orientation config handling, allowing app/player state recreation on rotation
+
+CORRECTION
+v0.4.1 replaces the tracker with OpenCV MIL, adds appearance/motion plausibility gates, requires visual tester confirmation for movement PASS, and preserves app/player state during rotation.
