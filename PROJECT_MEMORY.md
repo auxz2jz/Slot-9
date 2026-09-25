@@ -6,7 +6,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 
 **Repository:** auxz2jz/Slot-9  
 **Project:** Android DVR Video Player  
-**Current planned version:** v0.3.1  
+**Current planned version:** v0.4.0  
 **Status:** Planning / pre-code  
 **Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
@@ -179,10 +179,10 @@ If an implementation requires a major architecture change, record the reason bef
 **Playback foundation:** AndroidX Media3 / ExoPlayer  
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
-**Current version:** v0.3.1 development  
-**Last known working version:** v0.2.0 — physical-device guided test PASS
-**Build status:** v0.2.0 remains known-good; v0.3.0 compiled/ran but failed the hold-frame guided step; v0.3.1 targeted fix candidate packaged
-**Current phase:** DVR high-speed review + frame navigation improvements
+**Current version:** v0.4.0 development  
+**Last known working version:** v0.3.1 — physical-device guided test PASS
+**Build status:** v0.3.1 confirmed on physical device; v0.4.0 target-selection/tracking development started
+**Current phase:** Manual target selection + basic on-device tracking
 
 ---
 
@@ -190,47 +190,67 @@ If an implementation requires a major architecture change, record the reason bef
 
 ## User Request
 
-Continue to the next version after v0.2.0 passed. Add a visible frame counter, allow previous/next frame buttons to repeat slowly while held, make the controls/diagnostic section scrollable as the UI grows, and proceed to the next roadmap feature.
+Review the v0.3.1 diagnostic files and move on to the next feature.
+
+## Diagnostic Review Result
+
+The two v0.3.1 diagnostic ZIPs are the same successful session. `dvr_review_v3` PASSed all 8 guided steps with no recorded errors or crashes.
+
+Confirmed:
+- Open media PASS
+- Play PASS
+- single frame step PASS
+- press-and-hold frame advance PASS
+- 2x PASS
+- 4x PASS
+- 16x forward DVR scan PASS at approximately 15.99x effective rate
+- 16x reverse DVR scan PASS at approximately 15.77x effective rate
+- MediaExtractor reported 23 fps for the tested MKV
 
 ## Goal
 
-Build v0.3.0 as the DVR high-speed review release while preserving v0.2.0 as the known-good recovery baseline.
+Build v0.4.0 as the manual target-selection and basic tracking release while preserving v0.3.1 as the known-good recovery baseline.
 
 ## Implementation Plan
 
-1. Use v0.2.0 physical-device PASS as the recovery baseline.
-2. Add a visible current/total frame counter derived from media position and the best available frame rate.
-3. Improve frame-rate selection by preferring the selected Media3 video track's reported frame rate when available, with metadata/fallback behavior preserved.
-4. Keep single-tap previous/next frame stepping.
-5. Add press-and-hold repeated frame stepping with a slow repeat cadence and diagnostics.
-6. Make the controls and diagnostic/test area vertically scrollable while keeping the video viewport independently usable for pan/zoom.
-7. Add true Media3 playback at 2x and 4x.
-8. Add DVR-style forward scan at 8x, 16x, 32x and 64x using repeated seeks/frame skipping.
-9. Add DVR-style reverse scan at 8x, 16x, 32x and 64x using repeated backward seeks.
-10. Add v0.3 guided diagnostics that verify single-frame step, held-frame stepping, 2x, 4x, forward scan and reverse scan.
+1. Preserve all v0.3.1 playback, frame, scroll, zoom/pan and DVR-scan behavior.
+2. Add **Select Target** mode that pauses playback and resets zoom to 1x for consistent selection/tracking coordinates.
+3. Allow the user to drag a rectangular region directly over the visible video.
+4. Show the selected region as a blue box and provide Confirm / Cancel / Stop controls.
+5. Capture the displayed video from the existing TextureView at a reduced analysis resolution.
+6. Build a lightweight local template tracker using a sampled grayscale target grid and a bounded search area around the previous target location.
+7. Update the blue box as the best match moves.
+8. Record confidence, box coordinates, processing time and target-loss state in diagnostics.
+9. If confidence remains below threshold for consecutive updates, display **TRACK LOST** and stop pretending the target is valid.
+10. Add a v0.4 guided test that verifies target selection, tracker initialization, box updates/movement, and explicit lost-target behavior.
 11. Package an Android Studio-ready ZIP.
-12. Keep v0.2.0 as the known-good fallback until v0.3.0 compiles and passes on the physical device.
+12. Keep v0.3.1 as the recovery baseline until v0.4.0 passes on the physical device.
 
 ## Files Expected to Change
 
 - local Android Studio source
-- app/build.gradle.kts version
+- app/build.gradle.kts
 - DvrPlayerApp.kt
+- new tracking source file(s)
 - GuidedTestController.kt
 - README.md
 - PROJECT_MEMORY.md
 - DVR_PLAYER_ROADMAP.md
 - TESTING_DIAGNOSTICS.md
-- v0.3 source-candidate test report
+- v0.4 source-candidate report
 
 ## Files That Should NOT Be Changed
 
-- v0.1.0 and v0.2.0 known-good reports/checkpoints
+- v0.1/v0.2/v0.3.1 known-good reports/checkpoints
 - unrelated repositories
 
 ---
 
 # WORK IN PROGRESS
+
+- v0.3.1 physical-device guided test PASS is now the known-good recovery baseline.
+- v0.4.0 manual target-selection/basic tracking implementation started.
+- Tracking will use the existing TextureView for local displayed-frame capture at reduced resolution; no cloud dependency is required.
 
 - v0.3.0 device diagnostics failed specifically at forward held-frame stepping.
 - v0.3.0 passed Open, Play, and single forward-frame steps before the failure.
@@ -269,13 +289,14 @@ Build v0.3.0 as the DVR high-speed review release while preserving v0.2.0 as the
 
 # CURRENT KNOWN GOOD STATE
 
-**Version:** v0.2.0  
+**Version:** v0.3.1  
 **Status:** Physical-device guided test PASS  
-**Confirmed:** v0.1 baseline playback plus live scrub, pinch zoom, pan, Reset Zoom, single previous/next frame stepping, slow playback, diagnostics and ZIP export.  
-**Latest confirmed report:** `test_reports/DVR_Player_v0.2.0_device_guided_test_2026-09-24.txt`  
-**Known limitation discovered:** v0.2 frame stepping used a 30 fps fallback on the tested MKV because the older metadata path did not expose frame rate. v0.3 adds selected Media3 video-track frame-rate detection when available.
+**Confirmed:** v0.1/v0.2 baseline behavior plus frame counter, press-and-hold frame stepping, scrollable controls/diagnostics, 2x/4x playback, and 16x forward/reverse DVR scanning.  
+**Latest confirmed diagnostic session:** `dvr_review_v3` PASS on Samsung SM-S908U1 / Android 16.  
+**Measured scan rates:** approximately 15.99x forward and 15.77x reverse at requested 16x.  
+**Frame-rate detection:** MediaExtractor reported 23 fps for the tested 4K HEVC MKV.
 
-v0.2.0 remains the recovery point until v0.3.1 passes `dvr_review_v3` on the physical device.
+v0.3.1 remains the recovery point until v0.4.0 target selection/tracking passes its physical-device guided test.
 
 ---
 
