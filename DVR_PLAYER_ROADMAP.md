@@ -1016,6 +1016,6 @@ When the user introduces a new feature idea:
 
 **Date:** 2026-09-25  
 **Known-good baseline:** v0.3.1 physical-device guided test PASS  
-**Confirmed v0.3.1:** frame counter, held frame stepping, 2x/4x playback, 16x forward/reverse DVR scan, scrollable controls, diagnostics.  
-**Current candidate:** v0.4.0 manual target selection + basic local tracking.  
-**Next action:** Compile/install v0.4.0, run `target_tracking_v4`, and upload the latest diagnostic ZIP. Keep v0.3.1 as recovery baseline until v0.4.0 passes.
+**v0.4.0 result:** FAILED tracking/orientation validation. Manual selection worked, but the sampled-template tracker visibly drifted/jumped while still reporting high confidence; the movement test falsely passed; TRACK LOST arrived only after the tester stopped the failed test. Landscape rotation also reset/disappeared the player state.  
+**Current candidate:** v0.4.1 — OpenCV MIL tracking, appearance/motion plausibility checks, rejected teleports, tester-confirmed movement validation, explicit lost-target handling, and preserved landscape state.  
+**Next action:** Compile/install v0.4.1, run `target_tracking_v4_1`, and upload the latest diagnostic ZIP. Keep v0.3.1 as recovery baseline until v0.4.1 passes.
