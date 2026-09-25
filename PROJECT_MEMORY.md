@@ -6,7 +6,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 
 **Repository:** auxz2jz/Slot-9  
 **Project:** Android DVR Video Player  
-**Current planned version:** v0.4.0  
+**Current planned version:** v0.4.1  
 **Status:** Planning / pre-code  
 **Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
@@ -179,10 +179,10 @@ If an implementation requires a major architecture change, record the reason bef
 **Playback foundation:** AndroidX Media3 / ExoPlayer  
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
-**Current version:** v0.4.0 development  
+**Current version:** v0.4.1 development
 **Last known working version:** v0.3.1 — physical-device guided test PASS
-**Build status:** v0.3.1 confirmed on physical device; v0.4.0 target-selection/tracking development started
-**Current phase:** Manual target selection + basic on-device tracking
+**Build status:** v0.3.1 known-good; v0.4.0 failed tracking/orientation validation; v0.4.1 corrective Android Studio candidate packaged
+**Current phase:** Target tracking correction + orientation preservation
 
 ---
 
@@ -190,54 +190,51 @@ If an implementation requires a major architecture change, record the reason bef
 
 ## User Request
 
-Review the v0.3.1 diagnostic files and move on to the next feature.
+Correct v0.4.0 after physical-device testing showed the blue tracking box jumping around instead of following the selected animal, Test 3 falsely reporting PASS, TRACK LOST appearing only after the tester stopped the failed guided test, and landscape rotation making the video disappear/reset the program.
 
-## Diagnostic Review Result
+## Diagnostic Findings
 
-The two v0.3.1 diagnostic ZIPs are the same successful session. `dvr_review_v3` PASSed all 8 guided steps with no recorded errors or crashes.
+Two independent v0.4.0 sessions reproduced the same failure pattern.
 
-Confirmed:
-- Open media PASS
-- Play PASS
-- single frame step PASS
-- press-and-hold frame advance PASS
-- 2x PASS
-- 4x PASS
-- 16x forward DVR scan PASS at approximately 15.99x effective rate
-- 16x reverse DVR scan PASS at approximately 15.77x effective rate
-- MediaExtractor reported 23 fps for the tested MKV
+- Session e263f6b5-4d17-44d2-bd4a-e7b57ee32671: 295 TRACK_SAMPLE events, mean reported confidence about 0.773, maximum normalized jump about 0.183, 49 jumps >= 0.08, 11 jumps >= 0.12. TRACK LOST occurred 3.402 seconds after the tester had already stopped the failed Track Lost step.
+- Session 73e0a9e3-e372-4adf-8502-a4b194c1cc27: 183 TRACK_SAMPLE events, mean reported confidence about 0.767, maximum normalized jump about 0.182, 26 jumps >= 0.08 and all 26 >= 0.12. TRACK LOST occurred 4.229 seconds after the tester had already stopped the failed Track Lost step.
+- v0.4.0 Test 3 was a false positive because it treated confident box movement/accumulated movement as proof of correct target tracking even when the box was visibly drifting.
+- MainActivity did not handle orientation configuration changes, so remember/ExoPlayer/UI state could be recreated/reset on rotation.
 
 ## Goal
 
-Build v0.4.0 as the manual target-selection and basic tracking release while preserving v0.3.1 as the known-good recovery baseline.
+Build v0.4.1 as a corrective tracking/orientation release while preserving v0.3.1 as the known-good recovery baseline.
 
 ## Implementation Plan
 
-1. Preserve all v0.3.1 playback, frame, scroll, zoom/pan and DVR-scan behavior.
-2. Add **Select Target** mode that pauses playback and resets zoom to 1x for consistent selection/tracking coordinates.
-3. Allow the user to drag a rectangular region directly over the visible video.
-4. Show the selected region as a blue box and provide Confirm / Cancel / Stop controls.
-5. Capture the displayed video from the existing TextureView at a reduced analysis resolution.
-6. Build a lightweight local template tracker using a sampled grayscale target grid and a bounded search area around the previous target location.
-7. Update the blue box as the best match moves.
-8. Record confidence, box coordinates, processing time and target-loss state in diagnostics.
-9. If confidence remains below threshold for consecutive updates, display **TRACK LOST** and stop pretending the target is valid.
-10. Add a v0.4 guided test that verifies target selection, tracker initialization, box updates/movement, and explicit lost-target behavior.
-11. Package an Android Studio-ready ZIP.
-12. Keep v0.3.1 as the recovery baseline until v0.4.0 passes on the physical device.
+1. Replace the sampled-template tracker with OpenCV TrackerMIL from the official Android Maven package.
+2. Increase tracking capture to 480x270 and sample every 150 ms.
+3. Reject implausible tracker teleports instead of drawing the bad location.
+4. Add appearance-histogram similarity validation so unrelated background patches are less likely to be accepted as the target.
+5. Declare TRACK LOST after repeated OpenCV locate failures or repeated implausible drift.
+6. Change movement testing so box movement alone can never PASS.
+7. Require at least 4 seconds of stable objective measurements plus tester confirmation that the blue box is actually staying on the selected object.
+8. Add a Tracking Is Wrong control that records a real failure.
+9. Preserve player/media/test state across orientation changes using MainActivity configChanges.
+10. Add a landscape-specific flexible video layout so the player remains visible.
+11. Add orientation preservation as a guided-test step.
+12. Package an Android Studio-ready v0.4.1 ZIP.
+13. Keep v0.3.1 as the recovery point until v0.4.1 passes on-device.
 
 ## Files Expected to Change
 
 - local Android Studio source
 - app/build.gradle.kts
+- AndroidManifest.xml
 - DvrPlayerApp.kt
-- new tracking source file(s)
+- tracking implementation
 - GuidedTestController.kt
 - README.md
 - PROJECT_MEMORY.md
 - DVR_PLAYER_ROADMAP.md
 - TESTING_DIAGNOSTICS.md
-- v0.4 source-candidate report
+- v0.4.0 failure report
+- v0.4.1 source-candidate report
 
 ## Files That Should NOT Be Changed
 
@@ -247,6 +244,13 @@ Build v0.4.0 as the manual target-selection and basic tracking release while pre
 ---
 
 # WORK IN PROGRESS
+
+- v0.4.0 physical-device diagnostics confirmed tracker drift/jumps in two independent sessions.
+- v0.4.0 movement Test 3 was a false positive; it counted tracker drift as successful movement.
+- v0.4.0 TRACK LOST happened only after the tester had already stopped the failed test.
+- v0.4.0 landscape rotation reset/disappeared the player because Activity configuration changes were not preserved.
+- v0.4.1 replaces the tracker with OpenCV MIL, rejects teleports, adds appearance validation, requires tester confirmation, and preserves state during rotation.
+- v0.4.1 Android Studio-ready ZIP packaged; Android Studio compile and physical-device target_tracking_v4_1 test are pending.
 
 - v0.4.0 Android Studio-ready ZIP packaged.
 - v0.4.0 adds manual target selection, blue tracking overlay, lightweight local TextureView template tracking, confidence diagnostics and explicit TRACK LOST behavior.
@@ -301,7 +305,7 @@ Build v0.4.0 as the manual target-selection and basic tracking release while pre
 **Measured scan rates:** approximately 15.99x forward and 15.77x reverse at requested 16x.  
 **Frame-rate detection:** MediaExtractor reported 23 fps for the tested 4K HEVC MKV.
 
-v0.3.1 remains the recovery point until v0.4.0 target selection/tracking passes its physical-device guided test.
+v0.3.1 remains the recovery point until v0.4.1 target tracking/orientation passes its physical-device guided test.
 
 ---
 
