@@ -6,7 +6,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 
 **Repository:** auxz2jz/Slot-9  
 **Project:** Android DVR Video Player  
-**Current planned version:** v0.3.0  
+**Current planned version:** v0.3.1  
 **Status:** Planning / pre-code  
 **Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
@@ -179,9 +179,9 @@ If an implementation requires a major architecture change, record the reason bef
 **Playback foundation:** AndroidX Media3 / ExoPlayer  
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
-**Current version:** v0.3.0 development  
+**Current version:** v0.3.1 development  
 **Last known working version:** v0.2.0 — physical-device guided test PASS
-**Build status:** v0.2.0 confirmed on physical device; v0.3.0 Android Studio source candidate packaged and awaiting Android Studio compile/device test
+**Build status:** v0.2.0 remains known-good; v0.3.0 compiled/ran but failed the hold-frame guided step; v0.3.1 targeted fix candidate packaged
 **Current phase:** DVR high-speed review + frame navigation improvements
 
 ---
@@ -232,6 +232,12 @@ Build v0.3.0 as the DVR high-speed review release while preserving v0.2.0 as the
 
 # WORK IN PROGRESS
 
+- v0.3.0 device diagnostics failed specifically at forward held-frame stepping.
+- v0.3.0 passed Open, Play, and single forward-frame steps before the failure.
+- v0.3.1 corrects frame-boundary timestamps and uses an independent held-frame cursor.
+- v0.3.1 adds MediaExtractor frame-rate detection before fallback_30fps.
+- 2x/4x and forward/reverse DVR scan remain pending because the guided test did not reach those steps.
+
 - v0.2.0 physical-device guided test PASS is now the known-good recovery baseline.
 - v0.3.0 local source candidate adds frame counter, press-and-hold frame stepping, scrollable controls/diagnostics, 2x/4x playback and 8x-64x forward/reverse DVR scan.
 - v0.3.0 Android Studio-ready ZIP packaged; Android Studio compile and physical-device `dvr_review_v3` test are pending.
@@ -269,7 +275,7 @@ Build v0.3.0 as the DVR high-speed review release while preserving v0.2.0 as the
 **Latest confirmed report:** `test_reports/DVR_Player_v0.2.0_device_guided_test_2026-09-24.txt`  
 **Known limitation discovered:** v0.2 frame stepping used a 30 fps fallback on the tested MKV because the older metadata path did not expose frame rate. v0.3 adds selected Media3 video-track frame-rate detection when available.
 
-v0.2.0 remains the recovery point until v0.3.0 compiles and `dvr_review_v3` passes on the physical device.
+v0.2.0 remains the recovery point until v0.3.1 passes `dvr_review_v3` on the physical device.
 
 ---
 
@@ -328,6 +334,19 @@ Use only these status labels in the roadmap:
 ---
 
 # ERROR LOG
+
+## Error — v0.3.0 forward held-frame timestamp stall
+
+- Date: 2026-09-25
+- Version: v0.3.0
+- Feature: press-and-hold forward frame stepping
+- Exact symptom: hold input generated repeated frame-step requests, but forward frame position did not advance.
+- Diagnostic evidence: start frame 234, end frame 234, repeatRequests=6, advancedFrames=0. Repeated target frame 235 mapped to the same 7,833 ms timestamp already occupied by the player.
+- Root cause: rounded frame-boundary timestamp calculation could map the next frame to the current millisecond; repeated hold logic also recalculated from player.currentPosition, so asynchronous seek state could cause repeated identical requests.
+- Fix in v0.3.1: use CEIL-based target-frame timestamps and an independent logical frame cursor during held stepping.
+- Additional improvement: add MediaExtractor / MediaFormat.KEY_FRAME_RATE lookup before the 30 fps fallback.
+- Result: v0.3.1 Android Studio candidate prepared for retest.
+- Important: 2x/4x and DVR scan steps were not reached, so they remain UNVALIDATED rather than failed.
 
 ## Error — v0.2.0 clipToBounds import
 
@@ -499,14 +518,14 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. User opens the v0.3.0 Android Studio ZIP and compiles it.
+1. User opens the v0.3.1 Android Studio ZIP and compiles it.
 2. If compilation fails, analyze the exact Android Studio build output and make a targeted fix.
-3. If it builds, install/run v0.3.0 on the physical Android device.
+3. If it builds, install/run v0.3.1 on the physical Android device.
 4. Run **v0.3 Test** / `dvr_review_v3`.
 5. Test the visible frame counter and press-and-hold previous/next frame controls.
 6. Test 2x/4x playback and 16x forward/reverse DVR scan as guided.
 7. Export the latest diagnostic ZIP whether PASS or FAIL and upload it.
-8. Only after diagnostic review mark v0.3 features DONE and proceed to target selection/object tracking.
+8. Only after v0.3.1 diagnostic review mark the v0.3 features DONE and proceed to target selection/object tracking.
 
 ---
 
