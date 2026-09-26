@@ -623,7 +623,7 @@ For every new feature commit/checkpoint:
 # CURRENT STATUS
 
 **Date:** 2026-09-23  
-**Version:** v0.4.3 development  
+**Version:** v0.4.4 development  
 **Status:** v0.4.2 passed landscape/selection but failed real object tracking; v0.4.3 CSRT + zoom-selection candidate awaiting Android Studio/device validation.
 
 Implemented in v0.1.0 source:
@@ -823,3 +823,8 @@ New/changed tracking diagnostics:
 
 False-positive rule:
 Stable movement or a high appearance score alone must never PASS tracking. Human confirmation that the overlay is on the actual target remains mandatory.
+
+
+## v0.4.4 Dependency Compatibility Note
+
+The `target_tracking_v4_3` test contract is unchanged. v0.4.4 only corrects the Android OpenCV dependency so `org.opencv.tracking.TrackerCSRT` is actually present at compile/runtime. The free contrib AAR is arm64-v8a, so physical validation must be performed on the arm64 Samsung phone rather than an x86/x86_64 emulator.
