@@ -623,7 +623,7 @@ For every new feature commit/checkpoint:
 # CURRENT STATUS
 
 **Date:** 2026-09-23  
-**Version:** v0.4.4 development  
+**Version:** v0.4.5 development  
 **Status:** v0.4.2 passed landscape/selection but failed real object tracking; v0.4.3 CSRT + zoom-selection candidate awaiting Android Studio/device validation.
 
 Implemented in v0.1.0 source:
@@ -828,3 +828,42 @@ Stable movement or a high appearance score alone must never PASS tracking. Human
 ## v0.4.4 Dependency Compatibility Note
 
 The `target_tracking_v4_3` test contract is unchanged. v0.4.4 only corrects the Android OpenCV dependency so `org.opencv.tracking.TrackerCSRT` is actually present at compile/runtime. The free contrib AAR is arm64-v8a, so physical validation must be performed on the arm64 Samsung phone rather than an x86/x86_64 emulator.
+
+
+## v0.4.5 OpenCV Runtime Initialization Diagnostics
+
+The `target_tracking_v4_3` guided-test behavior is unchanged, but target initialization now has explicit runtime diagnostics.
+
+On target confirmation the application:
+1. attempts `OpenCVLoader.initLocal()`;
+2. verifies the loaded native runtime with `Core.getVersionString()`;
+3. if needed, falls back to `System.loadLibrary(Core.NATIVE_LIBRARY_NAME)`;
+4. verifies the runtime again;
+5. attempts CSRT creation and initialization.
+
+Successful initialization emits:
+- `TRACKING / OPENCV_RUNTIME_READY`
+- loadMethod
+- openCvVersion
+- priorFailure when fallback was needed
+- stage=`tracker_initialized`
+
+Failed initialization emits `TARGET_INITIALIZATION_FAILED` with:
+- reason/stage
+- runtimeReady
+- loadMethod
+- openCvVersion
+- priorFailure
+- exceptionType/message/stackTrace when present
+- analysis capture dimensions
+- selected target width/height in analysis pixels
+
+Failure stages distinguish at least:
+- runtime_load_failed
+- frame_conversion_failed
+- pixel_rect_invalid
+- target_too_small / target_too_small_pixels
+- tracker_create_failed
+- tracker_init_failed
+
+Do not change tracking thresholds/algorithm again until CSRT reaches `TRACK_TARGET_CONFIRMED` and produces TRACK_SAMPLE events on the physical device.
