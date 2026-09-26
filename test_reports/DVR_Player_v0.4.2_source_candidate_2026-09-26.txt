@@ -1,0 +1,32 @@
+DVR VIDEO PLAYER — v0.4.2 SOURCE CANDIDATE
+Date: 2026-09-26
+Known-good base: v0.3.1 physical-device PASS
+Immediate base: v0.4.1 corrective tracking/orientation source candidate
+
+TRIGGER
+Android Studio build of v0.4.1 reached :app:compileDebugKotlin and failed:
+DiagnosticExporter.kt:59:47 Unresolved reference 'summaryText'.
+
+ROOT CAUSE
+DiagnosticExporter still calls GuidedTestController.summaryText() to generate summary.txt, but the v0.4.1 GuidedTestController rewrite accidentally omitted that existing helper.
+
+FIX
+- Restored the exact summaryText() implementation used in prior working versions.
+- versionCode increased to 7.
+- versionName changed to 0.4.2.
+- visible app/test version labels changed to v0.4.2.
+- No OpenCV tracking, landscape-state, selection, lost-target, playback or DVR behavior changed.
+
+VALIDATION
+- GuidedTestController.kt and DiagnosticExporter.kt compile together in a local Kotlin contract check using minimal platform stubs.
+- Android XML parses successfully.
+- summaryText caller/callee contract verified.
+- ZIP integrity passes.
+- SHA256: 0cb66b7553e45c3cd40b980d3f451173aa5c2c28e92fc0aae55ee32b8e519b19
+- Full local Gradle compile could not run because this environment cannot resolve services.gradle.org.
+
+STATUS
+ANDROID STUDIO COMPILE + PHYSICAL DEVICE target_tracking_v4_1 REQUIRED
+
+RECOVERY
+v0.3.1 remains the last physical-device known-good baseline until v0.4.2 passes.
