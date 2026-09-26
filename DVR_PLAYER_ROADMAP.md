@@ -1049,5 +1049,5 @@ When the user introduces a new feature idea:
 **Date:** 2026-09-25  
 **Known-good baseline:** v0.3.1 physical-device guided test PASS  
 **v0.4.0 result:** FAILED tracking/orientation validation. Manual selection worked, but the sampled-template tracker visibly drifted/jumped while still reporting high confidence; the movement test falsely passed; TRACK LOST arrived only after the tester stopped the failed test. Landscape rotation also reset/disappeared the player state.  
-**Current candidate:** v0.4.2 — v0.4.1 tracking/orientation candidate plus targeted restoration of the missing diagnostic `summaryText()` helper required for compilation.  
-**Next action:** Compile/install v0.4.2, run `target_tracking_v4_1`, and upload the latest diagnostic ZIP. Keep v0.3.1 as recovery baseline until v0.4.2 passes.
+**Current candidate:** v0.4.3 — OpenCV CSRT, zoom-assisted target selection mapped to source coordinates, 640x360 analysis capture, finer appearance checks and fixed-template correlation.  
+**Next action:** Compile/install v0.4.3, run `target_tracking_v4_3`, and upload the diagnostic ZIP. Keep v0.3.1 as recovery baseline until v0.4.3 passes.
