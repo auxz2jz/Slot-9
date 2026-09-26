@@ -1,0 +1,38 @@
+DVR VIDEO PLAYER — v0.4.2 PHYSICAL DEVICE FAILURE REPORT
+
+Date: 2026-09-26
+Known-good fallback: v0.3.1
+Test ID: target_tracking_v4_1
+Session ID: 8a1e1bde-064d-443f-9f82-1b2854bb0e0c
+
+OVERALL RESULT
+FAIL — Open, landscape preservation and target initialization passed; real target tracking failed because the tester correctly reported the blue box was not following the selected animal.
+
+DIAGNOSTIC EXPORTS
+Two uploaded ZIPs are duplicate exports of the same session.
+
+CONFIRMED
+- Open media PASS
+- Landscape preservation PASS
+- Target selection/OpenCV initialization PASS
+- Track movement FAIL by explicit tester visual verification
+
+TRACKING EVIDENCE
+- 208 accepted TRACK_SAMPLE events
+- mean derived confidence ~0.524
+- confidence range ~0.502 to ~0.545
+- appearance histogram similarity ~0.912 to ~0.991
+- OpenCV MIL raw tracking score = -1 throughout sampled run
+- accepted box left range ~0.706 to ~0.742
+- accepted box top range ~0.596 to ~0.622
+- total accepted normalized movement ~0.394
+- maximum single accepted movement ~0.01275
+
+ROOT CAUSE
+The v0.4.1/v0.4.2 teleport guard solved large jumping, but MIL could still remain stably locked to a wrong/background region. Because native MIL trackingScore was -1, derived confidence was dominated by a coarse whole-box 4x4x4 RGB histogram; nearby background remained 91-99% similar under that metric.
+
+LATE TRACK LOST
+After the guided test failure, two proposed large jumps (~0.0898 then ~0.1795 normalized) were rejected and TRACK LOST was emitted. This confirms lost-target safeguards worked, but wrong-target identity needed stronger tracking/appearance validation.
+
+NEXT
+v0.4.3 replaces MIL with CSRT and adds zoom-assisted tight selection, source-coordinate mapping, 640x360 analysis, finer appearance histogram and fixed-template correlation.
