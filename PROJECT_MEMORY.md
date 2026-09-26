@@ -245,6 +245,8 @@ Build v0.4.1 as a corrective tracking/orientation release while preserving v0.3.
 
 # WORK IN PROGRESS
 
+- New roadmap idea recorded: non-destructive video image adjustment panel with brightness/exposure, contrast, sharpness, saturation/color, hue, gamma, temperature/tint, highlights/shadows, Reset, Original/Adjusted comparison, and diagnostic logging. This is future work and does not change v0.4.1.
+
 - v0.4.0 physical-device diagnostics confirmed tracker drift/jumps in two independent sessions.
 - v0.4.0 movement Test 3 was a false positive; it counted tracker drift as successful movement.
 - v0.4.0 TRACK LOST happened only after the tester had already stopped the failed test.
