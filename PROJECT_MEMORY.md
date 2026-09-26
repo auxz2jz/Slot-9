@@ -181,8 +181,8 @@ If an implementation requires a major architecture change, record the reason bef
 **Repository:** auxz2jz/Slot-9  
 **Current version:** v0.4.6 development
 **Last known working version:** v0.3.1 — physical-device guided test PASS
-**Build status:** v0.3.1 remains known-good; v0.4.5 compiled/ran and diagnostics identified exact native OpenCV library-name mismatch; v0.4.6 targeted loader fix planned
-**Current phase:** OpenCV native library-name compatibility before CSRT tracking validation
+**Build status:** v0.3.1 remains known-good; v0.4.5 device diagnostics identified exact native OpenCV library-name mismatch; v0.4.6 Android Studio candidate packaged
+**Current phase:** Native OpenCV library-name compatibility before CSRT tracking validation
 
 ---
 
@@ -251,7 +251,8 @@ Create v0.4.6 as a minimal OpenCV native-loader compatibility fix. Preserve CSRT
 # WORK IN PROGRESS
 
 - v0.4.5 diagnostics identified `libopencv_java500.so` not found while the packaged library is `libopencv_java5.so`.
-- v0.4.6 will change only the native OpenCV library-loading fallback and version markers.
+- v0.4.6 changes only the native OpenCV library-loading fallback and version markers; ZIP packaged and integrity-checked.
+- v0.4.6 ZIP SHA-256: `b007bb0c2f504aa45f55b7a16aee73f5d430e0cb742154cfa95c619b003f06b2`.
 
 - v0.4.5 ZIP SHA-256: `9a9ff5a3327fb82799f7bedeef4a0a883e7f3f66fd009eaadc909586513f6e3a`.
 - v0.4.5 OpenCV runtime-loader correction implemented; Android Studio-ready ZIP packaged and integrity-checked.
@@ -399,6 +400,18 @@ Use only these status labels in the roadmap:
 ---
 
 # ERROR LOG
+
+## Error — v0.4.5 native OpenCV library-name mismatch
+
+- Date: 2026-09-26
+- Version: v0.4.5
+- Feature: OpenCV CSRT runtime initialization
+- Exact symptom/error: `OpenCVLoader.initLocal()` returned false. Fallback called `System.loadLibrary(Core.NATIVE_LIBRARY_NAME)`; the Java constant resolved to `opencv_java500`; Android threw `UnsatisfiedLinkError: dlopen failed: library "libopencv_java500.so" not found`.
+- Diagnostic evidence: Open media PASS, landscape preservation PASS, target selection reached a valid ~74x63 analysis-pixel box, then `TARGET_INITIALIZATION_FAILED` reason=`runtime_load_failed`. No `OPENCV_RUNTIME_READY`, `TRACK_TARGET_CONFIRMED`, or TRACK_SAMPLE event occurred.
+- Root cause: the contrib Android AAR packaged the native library as `libopencv_java5.so`, while the fallback used the OpenCV Java constant name `opencv_java500`.
+- Fix in v0.4.6: after `OpenCVLoader.initLocal()` fails, explicitly try `System.loadLibrary("opencv_java5")` first, verify with `Core.getVersionString()`, then try `Core.NATIVE_LIBRARY_NAME` as a secondary compatibility fallback.
+- Validation: OpenCvCsrtTracker compiles against a local OpenCV 5 Java API stub; Android XML parses; ZIP integrity passes.
+- Result: v0.4.6 Android Studio candidate packaged.
 
 ## Error — v0.4.3 CSRT package missing from official OpenCV AAR
 
@@ -608,16 +621,16 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. User opens the v0.4.5 Android Studio ZIP and compiles it.
+1. User opens the v0.4.6 Android Studio ZIP and compiles it.
 2. If it builds, install/run on the arm64 Samsung phone.
-3. Run **v0.4.5 Test** / `target_tracking_v4_3`.
+3. Run **v0.4.6 Test** / `target_tracking_v4_3`.
 4. Open media and verify landscape preservation.
-5. Pause on a sharp frame, zoom/pan if useful, draw a tight target box and Confirm Target.
-6. If initialization succeeds, diagnostics must include `OPENCV_RUNTIME_READY` with load method and OpenCV version.
-7. If initialization fails, export immediately; `TARGET_INITIALIZATION_FAILED` now includes exact stage, runtime load method, exception type/message/stack and target pixel size.
-8. Only after CSRT initializes should tracking quality be judged with **Tracking Looks Correct / Tracking Is Wrong**.
-9. Export/upload the diagnostic ZIP whether PASS or FAIL.
-10. Keep v0.3.1 as the known-good recovery baseline until v0.4.5 passes.
+5. Pause on a sharp frame, optionally zoom/pan, draw a tight target box and Confirm Target.
+6. If OpenCV loads successfully, diagnostics should show `OPENCV_RUNTIME_READY` with loadMethod=`System.loadLibrary(opencv_java5)` (unless `initLocal()` unexpectedly succeeds).
+7. If target initialization reaches `TRACK_TARGET_CONFIRMED`, continue and judge actual CSRT tracking with **Tracking Looks Correct / Tracking Is Wrong**.
+8. Verify explicit TRACK LOST after the object is absent.
+9. Export/upload diagnostics whether PASS or FAIL.
+10. Keep v0.3.1 as the known-good recovery baseline until v0.4.6 passes.
 
 
 ---
