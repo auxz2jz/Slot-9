@@ -25,3 +25,6 @@ ANDROID STUDIO COMPILE + PHYSICAL DEVICE target_tracking_v4_3 REQUIRED
 
 RECOVERY
 v0.3.1 remains the last physical-device known-good baseline until v0.4.5 passes.
+
+ZIP SHA256
+9a9ff5a3327fb82799f7bedeef4a0a883e7f3f66fd009eaadc909586513f6e3a
