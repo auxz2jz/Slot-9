@@ -1,0 +1,46 @@
+DVR VIDEO PLAYER — v0.4.4 PHYSICAL DEVICE FAILURE REPORT
+
+Date: 2026-09-26
+Known-good fallback: v0.3.1
+App version: 0.4.4
+Test ID: target_tracking_v4_3
+Session ID: b872b16e-a4fc-48ea-927d-92ab618baaa1
+
+OVERALL RESULT
+FAIL at Select Target / tracker initialization.
+
+DIAGNOSTIC EXPORTS
+Two uploaded ZIPs are duplicate exports of the same session; the later export contains two extra export events.
+
+GUIDED RESULTS
+- Open media PASS (17,090 ms)
+- Rotate landscape PASS (2,687 ms)
+- Select target FAIL after tester stopped the step (116,318 ms)
+
+TARGET INITIALIZATION EVIDENCE
+- 7 TARGET_SELECTION_STARTED events
+- 9 TARGET_BOX_DRAWN events
+- 7 TARGET_INITIALIZATION_FAILED events
+- 0 TRACK_TARGET_CONFIRMED events
+- 0 TRACK_SAMPLE events
+- every initialization failure used reason=invalid_target_or_capture
+
+The selected targets were valid sizes and above the tracker minimum. Examples included approximately:
+- 34x47 analysis pixels
+- 52x69
+- 46x89
+- 53x94
+- 61x82
+- 85x97
+- 110x148
+
+Zoom-assisted selection was exercised at about 3.16x for the first six attempts. A final roughly 1x selection of ~110x148 pixels also failed, ruling out a simply-too-small box.
+
+ROOT-CAUSE DIRECTION
+In v0.4.4 OpenCvCsrtTracker.initialize() could return null before image conversion when OpenCVLoader.initLocal() returned false. The old diagnostics did not expose the exact stage, so v0.4.5 adds a fallback native-library load plus stage/exception/version logging before any additional tracker changes.
+
+POSITIVE REGRESSION RESULT
+Landscape preservation remains fixed.
+
+NEXT
+v0.4.5 — robust OpenCV runtime loading and exact initialization diagnostics, with CSRT/zoom/selection behavior otherwise unchanged.
