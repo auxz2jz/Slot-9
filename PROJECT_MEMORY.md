@@ -250,6 +250,11 @@ Build v0.4.3 as a tracking-accuracy release while preserving v0.3.1 as the last 
 
 # WORK IN PROGRESS
 
+- v0.4.3 Android Studio-ready ZIP packaged.
+- v0.4.3 replaces MIL with CSRT, increases analysis to 640x360, and adds zoom-assisted target selection mapped back to source coordinates.
+- v0.4.3 adds finer inner-box color appearance and fixed grayscale-template similarity diagnostics.
+- Local source/contract checks passed; full local Gradle build remains unavailable because services.gradle.org cannot be resolved.
+
 - v0.4.2 device diagnostics confirmed stable wrong-target/background lock despite teleport rejection.
 - v0.4.2 landscape preservation passed.
 - v0.4.3 will replace MIL with CSRT and add zoom-assisted target selection mapped back to original video coordinates.
@@ -574,15 +579,18 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. User opens the v0.4.2 Android Studio ZIP and compiles it.
-2. If compilation reports another error, analyze the exact first compile failure before changing unrelated code.
-3. If it builds, install/run v0.4.2 on the physical Android device.
-4. Run the existing **v0.4.2 Test** / `target_tracking_v4_1` sequence.
-5. Verify landscape preserves the same loaded video.
-6. Verify the blue tracking box genuinely stays on the selected moving object; use **Tracking Is Wrong** if it does not.
-7. Verify explicit **TRACK LOST** after seeking to footage where the target is absent.
-8. Export/upload the latest diagnostic ZIP whether PASS or FAIL.
-9. Keep v0.3.1 as the known-good recovery baseline until v0.4.2 passes.
+1. User opens the v0.4.3 Android Studio ZIP and compiles it.
+2. If compilation fails, analyze the exact first compile error and make a targeted correction only.
+3. If it builds, install/run v0.4.3.
+4. Run **v0.4.3 Test** / `target_tracking_v4_3`.
+5. Use a sharp paused frame. For a small target, zoom/pan before tapping Select Target.
+6. Draw the tightest box that contains the object with minimal background.
+7. Confirm target; verify the display resets to 1x and the tracking box follows the actual object.
+8. Use 0.50x or 1x playback for fast-moving targets.
+9. Press **Tracking Is Wrong** if the box is not truly on the object; never approve a visually wrong track.
+10. If tracking passes, seek to footage where the target is absent and verify explicit TRACK LOST.
+11. Export/upload the diagnostic ZIP whether PASS or FAIL.
+12. Keep v0.3.1 as the known-good fallback until v0.4.3 passes.
 
 
 ---
