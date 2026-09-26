@@ -1049,5 +1049,5 @@ When the user introduces a new feature idea:
 **Date:** 2026-09-25  
 **Known-good baseline:** v0.3.1 physical-device guided test PASS  
 **v0.4.0 result:** FAILED tracking/orientation validation. Manual selection worked, but the sampled-template tracker visibly drifted/jumped while still reporting high confidence; the movement test falsely passed; TRACK LOST arrived only after the tester stopped the failed test. Landscape rotation also reset/disappeared the player state.  
-**Current candidate:** v0.4.5 — same CSRT/zoom-assisted tracking behavior plus robust OpenCV runtime loading and exact target-initialization diagnostics.  
-**Next action:** Compile/install v0.4.5 on the arm64 Samsung device, run `target_tracking_v4_3`, and upload the diagnostic ZIP. Keep v0.3.1 as recovery baseline until v0.4.5 passes.
+**Current candidate:** v0.4.6 — same CSRT/zoom-assisted tracking behavior with native OpenCV fallback corrected to try packaged `opencv_java5` before the Java constant.  
+**Next action:** Compile/install v0.4.6 on the arm64 Samsung device, run `target_tracking_v4_3`, and upload the diagnostic ZIP. Keep v0.3.1 as recovery baseline until v0.4.6 passes.
