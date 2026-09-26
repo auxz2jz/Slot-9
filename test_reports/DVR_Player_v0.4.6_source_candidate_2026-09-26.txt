@@ -1,0 +1,29 @@
+DVR VIDEO PLAYER — v0.4.6 SOURCE CANDIDATE
+Date: 2026-09-26
+Known-good base: v0.3.1 physical-device PASS
+Immediate diagnostic base: v0.4.5 native OpenCV load FAIL / landscape PASS
+
+CHANGES
+- CSRT algorithm unchanged.
+- zoom-assisted selection/source-coordinate mapping unchanged.
+- contrib OpenCV dependency unchanged.
+- loader still tries OpenCVLoader.initLocal() first.
+- after initLocal failure, loader explicitly tries System.loadLibrary("opencv_java5") first.
+- then tries Core.NATIVE_LIBRARY_NAME as secondary compatibility fallback.
+- every successful load is verified with Core.getVersionString().
+- failed library attempts are preserved in initialization diagnostics.
+- versionCode 11 / versionName 0.4.6.
+- guided test remains target_tracking_v4_3.
+
+LOCAL VALIDATION
+- OpenCvCsrtTracker compiles successfully with kotlinc against lightweight Android/OpenCV 5 Java API stubs including TrackerCSRT.
+- Android XML parses successfully.
+- ZIP integrity test passes.
+- ZIP SHA256 b007bb0c2f504aa45f55b7a16aee73f5d430e0cb742154cfa95c619b003f06b2
+- full Android Gradle build remains unavailable locally because this environment cannot resolve external Android/Maven dependencies.
+
+STATUS
+ANDROID STUDIO COMPILE + PHYSICAL DEVICE target_tracking_v4_3 REQUIRED
+
+RECOVERY
+v0.3.1 remains the last physical-device known-good baseline until v0.4.6 passes.
