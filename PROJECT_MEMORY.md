@@ -235,7 +235,7 @@ Create v0.4.2 as a minimal compile-fix release that restores the existing diagno
 # WORK IN PROGRESS
 
 - v0.4.1 Android Studio compile reached Kotlin compilation and failed only because `GuidedTestController.summaryText()` was missing.
-- v0.4.2 is a targeted compile fix restoring the prior proven diagnostic summary helper; no tracking/orientation feature changes are planned.
+- v0.4.2 restores the prior proven diagnostic summary helper and is packaged as the current Android Studio candidate; no tracking/orientation feature behavior was changed.
 
 - New roadmap idea recorded: non-destructive video image adjustment panel with brightness/exposure, contrast, sharpness, saturation/color, hue, gamma, temperature/tint, highlights/shadows, Reset, Original/Adjusted comparison, and diagnostic logging. This is future work and does not change v0.4.1.
 
@@ -299,7 +299,7 @@ Create v0.4.2 as a minimal compile-fix release that restores the existing diagno
 **Measured scan rates:** approximately 15.99x forward and 15.77x reverse at requested 16x.  
 **Frame-rate detection:** MediaExtractor reported 23 fps for the tested 4K HEVC MKV.
 
-v0.3.1 remains the recovery point until v0.4.1 target tracking/orientation passes its physical-device guided test.
+v0.3.1 remains the recovery point until v0.4.2 target tracking/orientation passes its physical-device guided test.
 
 ---
 
@@ -358,6 +358,18 @@ Use only these status labels in the roadmap:
 ---
 
 # ERROR LOG
+
+## Error — v0.4.1 missing GuidedTestController.summaryText
+
+- Date: 2026-09-26
+- Version: v0.4.1
+- Feature: diagnostic ZIP summary generation
+- Exact symptom/error: Android Studio `:app:compileDebugKotlin` failed in `DiagnosticExporter.kt` with unresolved reference `summaryText`.
+- Diagnostic evidence: resources, manifest processing, native/OpenCV packaging and dependency processing completed; Kotlin compile then stopped at the call `testController.summaryText()`.
+- Root cause: the v0.4.1 rewrite of `GuidedTestController.kt` accidentally omitted the existing `summaryText()` helper while `DiagnosticExporter.kt` still depended on it.
+- Fix in v0.4.2: restore the exact proven `summaryText()` implementation used by earlier versions; preserve v0.4.1 tracking/orientation behavior unchanged.
+- Validation: GuidedTestController + DiagnosticExporter compile together under a local stubbed Kotlin contract check; Android XML parses; ZIP integrity passes. Full Gradle build remains unavailable locally because services.gradle.org cannot be resolved.
+- Result: v0.4.2 Android Studio candidate packaged for Android Studio compile and device test.
 
 ## Error — v0.3.0 forward held-frame timestamp stall
 
@@ -542,15 +554,16 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. User opens the v0.4.0 Android Studio ZIP and compiles it.
-2. If compilation fails, use the exact Android Studio build output for a targeted correction.
-3. If it builds, install/run v0.4.0 on the physical Android device.
-4. Run **v0.4 Test** / `target_tracking_v4`.
-5. Choose a clearly visible moving target, draw the blue target box, Confirm Target, then press Play.
-6. Let the target move until tracking movement passes.
-7. Seek to a very different part where the target is absent and verify explicit **TRACK LOST**.
+1. User opens the v0.4.2 Android Studio ZIP and compiles it.
+2. If compilation reports another error, analyze the exact first compile failure before changing unrelated code.
+3. If it builds, install/run v0.4.2 on the physical Android device.
+4. Run the existing **v0.4.2 Test** / `target_tracking_v4_1` sequence.
+5. Verify landscape preserves the same loaded video.
+6. Verify the blue tracking box genuinely stays on the selected moving object; use **Tracking Is Wrong** if it does not.
+7. Verify explicit **TRACK LOST** after seeking to footage where the target is absent.
 8. Export/upload the latest diagnostic ZIP whether PASS or FAIL.
-9. Keep v0.3.1 as the recovery baseline until v0.4.0 passes.
+9. Keep v0.3.1 as the known-good recovery baseline until v0.4.2 passes.
+
 
 ---
 
