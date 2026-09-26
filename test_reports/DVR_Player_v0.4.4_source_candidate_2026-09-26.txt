@@ -1,0 +1,41 @@
+DVR VIDEO PLAYER — v0.4.4 SOURCE CANDIDATE
+Date: 2026-09-26
+Known-good base: v0.3.1 physical-device PASS
+Immediate base: v0.4.3 CSRT + zoom-assisted tracking source candidate
+
+TRIGGER
+Android Studio v0.4.3 build reached :app:compileDebugKotlin and failed with:
+- unresolved package org.opencv.tracking
+- unresolved TrackerCSRT
+- follow-on unresolved update/trackingScore/type inference errors
+
+ROOT CAUSE
+v0.4.3 depended on org.opencv:opencv:5.0.0.1. The official OpenCV Android AAR does not include the contrib tracking module required by TrackerCSRT.
+
+FIX
+- Replace dependency:
+  org.opencv:opencv:5.0.0.1
+  -> dev.ffmpegkit-maintained:opencv-contrib-android:5.0.0
+- The maintained contrib AAR explicitly includes OpenCV core + tracking (CSRT/KCF/MOSSE).
+- Keep OpenCvCsrtTracker.kt behavior unchanged.
+- versionCode 9
+- versionName 0.4.4
+- visible app/test version labels updated to v0.4.4.
+- Guided test ID remains target_tracking_v4_3.
+
+COMPATIBILITY
+The free contrib artifact is arm64-v8a. This matches the current Samsung SM-S908U1 test phone. x86/x86_64 emulator runtime is not supported by this artifact.
+
+LOCAL VALIDATION
+- No stale org.opencv:opencv Gradle dependency remains.
+- Android XML parses.
+- Kotlin source structure checks pass.
+- OpenCvCsrtTracker contains documented TrackerCSRT create/init/update/getTrackingScore contract.
+- OpenCvCsrtTracker compiles against a lightweight local stub of the OpenCV 5 CSRT Java API.
+- Full Gradle dependency resolution cannot be performed in this environment because Maven/Gradle network access is unavailable.
+
+STATUS
+ANDROID STUDIO COMPILE + PHYSICAL DEVICE target_tracking_v4_3 REQUIRED
+
+RECOVERY
+v0.3.1 remains the last physical-device known-good baseline until v0.4.4 passes.
