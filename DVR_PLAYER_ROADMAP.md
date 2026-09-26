@@ -789,13 +789,45 @@ Allow viewing rotation without modifying original media.
 
 ---
 
-## 10.4 Viewing brightness/contrast — PLANNED
+## 10.4 Non-destructive video image adjustments — PLANNED
 
-Optional viewing-only adjustments.
+Add a viewing-only adjustment panel for improving visibility while reviewing footage.
 
-Do not alter source video.
+Initial controls to evaluate:
+- brightness / exposure
+- contrast
+- sharpness
+- saturation / color intensity
+- hue
+- gamma / midtone brightness
+- color temperature (warmer / cooler)
+- tint (green / magenta)
+- highlights
+- shadows
+- optional black level / white level if useful after testing
 
-Any exported enhanced still should record what processing was applied where practical.
+Requirements:
+- adjustments affect only the displayed video by default,
+- original source video remains unchanged,
+- work while paused and during playback where performance allows,
+- allow instant Reset to original,
+- provide an Original / Adjusted comparison toggle,
+- preserve reasonable adjustment ranges so controls do not easily destroy the image,
+- adjustment values should be visible numerically,
+- settings should be included in diagnostics when changed,
+- exported enhanced stills/clips should record which adjustments were applied where practical.
+
+Potential UI:
+- collapsible Adjustments panel,
+- sliders with numeric values,
+- Reset All,
+- optional presets such as Low Light, High Contrast, or Neutral only after individual controls are proven.
+
+Guided testing should verify:
+- each control changes the rendered view,
+- Reset restores the unadjusted view,
+- original media remains unmodified,
+- adjustment values survive ordinary UI interactions as intended.
 
 ---
 
