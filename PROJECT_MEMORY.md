@@ -6,7 +6,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 
 **Repository:** auxz2jz/Slot-9  
 **Project:** Android DVR Video Player  
-**Current planned version:** v0.4.4  
+**Current planned version:** v0.4.5  
 **Status:** Planning / pre-code  
 **Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
@@ -179,10 +179,10 @@ If an implementation requires a major architecture change, record the reason bef
 **Playback foundation:** AndroidX Media3 / ExoPlayer  
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
-**Current version:** v0.4.4 development
+**Current version:** v0.4.5 development
 **Last known working version:** v0.3.1 — physical-device guided test PASS
-**Build status:** v0.3.1 remains known-good; v0.4.3 Android Studio compile failed because the official OpenCV AAR omits the contrib tracking package; v0.4.4 dependency-compatibility candidate packaged
-**Current phase:** CSRT tracking dependency compatibility + zoom-assisted target selection
+**Build status:** v0.3.1 remains known-good; v0.4.4 compiled/ran but CSRT target initialization failed on every valid selection; v0.4.5 OpenCV runtime-loader correction in progress
+**Current phase:** OpenCV runtime initialization correction before CSRT tracking validation
 
 ---
 
@@ -190,51 +190,71 @@ If an implementation requires a major architecture change, record the reason bef
 
 ## User Request
 
-Android Studio compile output for v0.4.3 shows that the CSRT tracker source cannot resolve `org.opencv.tracking.TrackerCSRT`. Correct the build without discarding the v0.4.3 tracking improvements.
+Review v0.4.4 diagnostic ZIPs after the guided test failed during target selection/initialization, and improve the project so CSRT can actually initialize before further tracking-quality work.
 
-## Diagnostic Finding
+## Diagnostic Findings
 
-The v0.4.3 source uses OpenCV CSRT correctly against the OpenCV 5 Java API, but the Gradle dependency was the official `org.opencv:opencv:5.0.0.1` Android AAR. That AAR does not include the contrib `tracking` module. Android Studio therefore cannot compile `org.opencv.tracking.TrackerCSRT`.
+Both uploaded v0.4.4 ZIPs are duplicate exports of the same session:
+- session ID: b872b16e-a4fc-48ea-927d-92ab618baaa1
+- test ID: target_tracking_v4_3
 
-The maintained Android contrib artifact `dev.ffmpegkit-maintained:opencv-contrib-android:5.0.0` explicitly includes core OpenCV plus the contrib tracking module with CSRT/KCF/MOSSE.
+Results:
+- Open media PASS
+- Landscape preservation PASS
+- Select target FAIL after the tester stopped the step
+- No TRACK_TARGET_CONFIRMED event occurred
+- Seven TARGET_INITIALIZATION_FAILED events occurred
+- All failures used reason=invalid_target_or_capture
+- The selected target boxes were not too small. Examples ranged from approximately 34x47 to 110x148 analysis pixels, all above the tracker minimum.
+- Because initialize() can return null before frame conversion only when OpenCV runtime loading fails (or when target dimensions are invalid, which diagnostics rule out), the leading hypothesis is OpenCVLoader.initLocal() returning false with the contrib AAR on this device/runtime.
 
 ## Goal
 
-Build v0.4.4 as a dependency-compatibility release. Preserve all v0.4.3 tracking logic, zoom-assisted target selection, 640x360 analysis, appearance/template validation, landscape behavior, diagnostics and guided-test rules.
+Create v0.4.5 as a targeted OpenCV runtime-initialization fix. Do not change CSRT tracking behavior, zoom-assisted selection, coordinate mapping or the v0.4.3 guided-test contract until the tracker can initialize successfully.
 
 ## Implementation Plan
 
-1. Start from the exact v0.4.3 project.
-2. Replace `org.opencv:opencv:5.0.0.1` with `dev.ffmpegkit-maintained:opencv-contrib-android:5.0.0`.
-3. Do not change `OpenCvCsrtTracker` algorithm behavior.
-4. Update app version to v0.4.4 / versionCode 9.
-5. Keep the guided test ID `target_tracking_v4_3` because the test behavior is unchanged.
-6. Verify Android XML, Kotlin structure and CSRT source contract.
-7. Package an Android Studio-ready ZIP.
-8. Compile/test on the arm64 Samsung device and export diagnostics.
-9. Keep v0.3.1 as the last physical-device known-good baseline until v0.4.4 passes.
+1. Start from exact v0.4.4 source.
+2. Preserve CSRT tracking/appearance/template/jump logic unchanged.
+3. Replace the single OpenCVLoader.initLocal() gate with a staged loader:
+   - try OpenCVLoader.initLocal()
+   - verify the native runtime with Core.getVersionString()
+   - if initLocal fails or runtime verification fails, try System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+   - verify again with Core.getVersionString()
+4. Record detailed initialization diagnostics in OpenCvCsrtTracker: load method, stage, OpenCV version, exception type/message/stack where applicable.
+5. On TARGET_INITIALIZATION_FAILED, include those exact diagnostics plus frame dimensions and selected target pixel dimensions instead of generic invalid_target_or_capture only.
+6. Add a positive OPENCV_RUNTIME_READY diagnostic when initialization succeeds.
+7. Increase version to v0.4.5 / versionCode 10.
+8. Keep guided test ID target_tracking_v4_3 because behavior under test is unchanged.
+9. Package Android Studio ZIP and require compile/device retest.
+10. Keep v0.3.1 as last physical-device known-good baseline.
 
 ## Files Expected to Change
 
-- app/build.gradle.kts
-- version labels in DvrPlayerApp.kt
-- README.md
+- OpenCvCsrtTracker.kt
+- DvrPlayerApp.kt diagnostics around target initialization
+- app/build.gradle.kts version
+- README.md/version labels
 - PROJECT_MEMORY.md
-- DVR_PLAYER_ROADMAP.md
-- source-candidate report
+- TESTING_DIAGNOSTICS.md
+- v0.4.4 failure report
+- v0.4.5 source candidate report
 
 ## Files That Should NOT Be Changed
 
-- OpenCvCsrtTracker tracking algorithm
+- CSRT tracking algorithm behavior
 - zoom/source-coordinate mapping
-- guided-test logic
+- guided-test PASS/FAIL thresholds
 - playback/DVR controls
-- existing known-good reports
-- unrelated repositories
+- v0.3.1 known-good files
 
 ---
 
 # WORK IN PROGRESS
+
+- v0.4.4 device diagnostics isolated failure to target initialization before CSRT tracking began.
+- Seven valid-sized target selections all failed initialization; no tracking samples were produced.
+- v0.4.5 will add robust OpenCV native loading plus exact runtime-init diagnostics before changing tracker behavior.
 
 - v0.4.3 Android Studio compile failed because the official OpenCV AAR does not include `org.opencv.tracking.TrackerCSRT`.
 - v0.4.4 keeps the CSRT/zoom-assisted tracking source unchanged and swaps to the maintained contrib Android AAR that includes the tracking module.
