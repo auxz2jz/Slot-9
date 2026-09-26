@@ -6,7 +6,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 
 **Repository:** auxz2jz/Slot-9  
 **Project:** Android DVR Video Player  
-**Current planned version:** v0.4.1  
+**Current planned version:** v0.4.2  
 **Status:** Planning / pre-code  
 **Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
@@ -179,9 +179,9 @@ If an implementation requires a major architecture change, record the reason bef
 **Playback foundation:** AndroidX Media3 / ExoPlayer  
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
-**Current version:** v0.4.1 development
+**Current version:** v0.4.2 development
 **Last known working version:** v0.3.1 — physical-device guided test PASS
-**Build status:** v0.3.1 known-good; v0.4.0 failed tracking/orientation validation; v0.4.1 corrective Android Studio candidate packaged
+**Build status:** v0.3.1 known-good; v0.4.1 reached Kotlin compile but failed because GuidedTestController.summaryText() was missing; v0.4.2 targeted compile-fix candidate in progress
 **Current phase:** Target tracking correction + orientation preservation
 
 ---
@@ -190,60 +190,52 @@ If an implementation requires a major architecture change, record the reason bef
 
 ## User Request
 
-Correct v0.4.0 after physical-device testing showed the blue tracking box jumping around instead of following the selected animal, Test 3 falsely reporting PASS, TRACK LOST appearing only after the tester stopped the failed guided test, and landscape rotation making the video disappear/reset the program.
+Android Studio compile output for v0.4.1 shows a single Kotlin compile failure in `DiagnosticExporter.kt`: unresolved reference `summaryText` on `GuidedTestController`.
 
-## Diagnostic Findings
+## Diagnostic Finding
 
-Two independent v0.4.0 sessions reproduced the same failure pattern.
+The exporter calls `testController.summaryText()` when creating `summary.txt`, but the v0.4.1 `GuidedTestController.kt` accidentally omitted the `summaryText()` helper. The same helper exists in confirmed earlier project versions and generates the human-readable test summary used inside the diagnostic ZIP.
 
-- Session e263f6b5-4d17-44d2-bd4a-e7b57ee32671: 295 TRACK_SAMPLE events, mean reported confidence about 0.773, maximum normalized jump about 0.183, 49 jumps >= 0.08, 11 jumps >= 0.12. TRACK LOST occurred 3.402 seconds after the tester had already stopped the failed Track Lost step.
-- Session 73e0a9e3-e372-4adf-8502-a4b194c1cc27: 183 TRACK_SAMPLE events, mean reported confidence about 0.767, maximum normalized jump about 0.182, 26 jumps >= 0.08 and all 26 >= 0.12. TRACK LOST occurred 4.229 seconds after the tester had already stopped the failed Track Lost step.
-- v0.4.0 Test 3 was a false positive because it treated confident box movement/accumulated movement as proof of correct target tracking even when the box was visibly drifting.
-- MainActivity did not handle orientation configuration changes, so remember/ExoPlayer/UI state could be recreated/reset on rotation.
+Android Studio successfully completed Android resources, manifest processing, native/OpenCV packaging and reached `:app:compileDebugKotlin` before stopping on this unresolved reference.
 
 ## Goal
 
-Build v0.4.1 as a corrective tracking/orientation release while preserving v0.3.1 as the known-good recovery baseline.
+Create v0.4.2 as a minimal compile-fix release that restores the existing diagnostic summary helper without changing v0.4.1 tracking, orientation, UI or guided-test behavior.
 
 ## Implementation Plan
 
-1. Replace the sampled-template tracker with OpenCV TrackerMIL from the official Android Maven package.
-2. Increase tracking capture to 480x270 and sample every 150 ms.
-3. Reject implausible tracker teleports instead of drawing the bad location.
-4. Add appearance-histogram similarity validation so unrelated background patches are less likely to be accepted as the target.
-5. Declare TRACK LOST after repeated OpenCV locate failures or repeated implausible drift.
-6. Change movement testing so box movement alone can never PASS.
-7. Require at least 4 seconds of stable objective measurements plus tester confirmation that the blue box is actually staying on the selected object.
-8. Add a Tracking Is Wrong control that records a real failure.
-9. Preserve player/media/test state across orientation changes using MainActivity configChanges.
-10. Add a landscape-specific flexible video layout so the player remains visible.
-11. Add orientation preservation as a guided-test step.
-12. Package an Android Studio-ready v0.4.1 ZIP.
-13. Keep v0.3.1 as the recovery point until v0.4.1 passes on-device.
+1. Start from the exact v0.4.1 Android Studio project.
+2. Preserve all v0.4.1 tracking/orientation code unchanged.
+3. Restore the proven `summaryText()` implementation from earlier working versions of `GuidedTestController`.
+4. Increase version to v0.4.2 / versionCode 7.
+5. Run source/ZIP integrity checks and attempt Gradle compile if the local Android environment permits.
+6. Package an Android Studio-ready v0.4.2 ZIP.
+7. Record the compile failure and fix in project memory/test report.
+8. Keep v0.3.1 as the last physical-device known-good baseline until v0.4.2 compiles and passes the v0.4.1 tracking/orientation guided test.
 
 ## Files Expected to Change
 
-- local Android Studio source
+- app/src/main/java/com/zaksecurity/dvrplayer/testing/GuidedTestController.kt
 - app/build.gradle.kts
-- AndroidManifest.xml
-- DvrPlayerApp.kt
-- tracking implementation
-- GuidedTestController.kt
-- README.md
+- README.md/version text if present
 - PROJECT_MEMORY.md
-- DVR_PLAYER_ROADMAP.md
-- TESTING_DIAGNOSTICS.md
-- v0.4.0 failure report
-- v0.4.1 source-candidate report
+- v0.4.2 source-candidate report
 
 ## Files That Should NOT Be Changed
 
-- v0.1/v0.2/v0.3.1 known-good reports/checkpoints
+- tracking algorithm
+- DvrPlayerApp behavior
+- AndroidManifest orientation fix
+- diagnostic export format
+- existing known-good reports/checkpoints
 - unrelated repositories
 
 ---
 
 # WORK IN PROGRESS
+
+- v0.4.1 Android Studio compile reached Kotlin compilation and failed only because `GuidedTestController.summaryText()` was missing.
+- v0.4.2 is a targeted compile fix restoring the prior proven diagnostic summary helper; no tracking/orientation feature changes are planned.
 
 - New roadmap idea recorded: non-destructive video image adjustment panel with brightness/exposure, contrast, sharpness, saturation/color, hue, gamma, temperature/tint, highlights/shadows, Reset, Original/Adjusted comparison, and diagnostic logging. This is future work and does not change v0.4.1.
 
