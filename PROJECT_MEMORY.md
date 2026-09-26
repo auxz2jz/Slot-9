@@ -252,6 +252,10 @@ Create v0.4.5 as a targeted OpenCV runtime-initialization fix. Do not change CSR
 
 # WORK IN PROGRESS
 
+- v0.4.5 OpenCV runtime-loader correction implemented; Android Studio ZIP packaging/verification is the current handoff step.
+- v0.4.5 tries OpenCVLoader.initLocal(), then System.loadLibrary(Core.NATIVE_LIBRARY_NAME), and verifies with Core.getVersionString().
+- Initialization failures now identify the exact stage and exception instead of generic invalid_target_or_capture.
+
 - v0.4.4 device diagnostics isolated failure to target initialization before CSRT tracking began.
 - Seven valid-sized target selections all failed initialization; no tracking samples were produced.
 - v0.4.5 will add robust OpenCV native loading plus exact runtime-init diagnostics before changing tracker behavior.
@@ -602,17 +606,16 @@ Update this section when the actual architecture is established.
 
 # NEXT STEPS
 
-1. User opens the v0.4.4 Android Studio ZIP and allows Gradle to download the contrib OpenCV AAR.
-2. Compile `:app:assembleDebug`.
-3. If another compile error appears, analyze the first real compiler error before changing tracking logic.
-4. If it builds, install/run on the arm64 Samsung physical device.
-5. Run **v0.4.4 Test** / `target_tracking_v4_3`.
-6. Pause on a sharp frame; zoom/pan before Select Target if the object is small.
-7. Draw a tight target box with minimal background and confirm it.
-8. Verify the blue box genuinely follows the selected object; use **Tracking Is Wrong** if not.
-9. Verify explicit TRACK LOST after the object is absent.
-10. Export/upload the diagnostic ZIP whether PASS or FAIL.
-11. Keep v0.3.1 as the known-good recovery baseline until v0.4.4 passes.
+1. User opens the v0.4.5 Android Studio ZIP and compiles it.
+2. If it builds, install/run on the arm64 Samsung phone.
+3. Run **v0.4.5 Test** / `target_tracking_v4_3`.
+4. Open media and verify landscape preservation.
+5. Pause on a sharp frame, zoom/pan if useful, draw a tight target box and Confirm Target.
+6. If initialization succeeds, diagnostics must include `OPENCV_RUNTIME_READY` with load method and OpenCV version.
+7. If initialization fails, export immediately; `TARGET_INITIALIZATION_FAILED` now includes exact stage, runtime load method, exception type/message/stack and target pixel size.
+8. Only after CSRT initializes should tracking quality be judged with **Tracking Looks Correct / Tracking Is Wrong**.
+9. Export/upload the diagnostic ZIP whether PASS or FAIL.
+10. Keep v0.3.1 as the known-good recovery baseline until v0.4.5 passes.
 
 
 ---
