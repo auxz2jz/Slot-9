@@ -1,0 +1,43 @@
+DVR VIDEO PLAYER — v0.4.5 PHYSICAL DEVICE FAILURE REPORT
+
+Date: 2026-09-26
+Known-good fallback: v0.3.1
+App version: 0.4.5
+Test ID: target_tracking_v4_3
+Session ID: 41abb446-9d59-4ca2-ba21-8262ac4ba25b
+
+OVERALL RESULT
+FAIL at Select Target / OpenCV runtime initialization.
+
+DIAGNOSTIC EXPORTS
+Two uploaded ZIPs are duplicate exports of the same session; the later export contains additional export events.
+
+GUIDED RESULTS
+- Open media PASS (10,868 ms)
+- Rotate landscape PASS (2,849 ms)
+- Select target FAIL after tester stopped the step (87,211 ms)
+
+FIRST REAL FAILURE
+TARGET_INITIALIZATION_FAILED at sequence 101:
+- reason=runtime_load_failed
+- runtimeReady=false
+- OpenCVLoader.initLocal returned false
+- fallback loadMethod=System.loadLibrary(opencv_java500)
+- exception=java.lang.UnsatisfiedLinkError
+- message=dlopen failed: library "libopencv_java500.so" not found
+- capture=640x360
+- selected target approximately 74.33x63.45 analysis pixels
+
+The same runtime-load error repeated on later valid target selections.
+
+ROOT CAUSE
+The contrib Android AAR's packaged native library name differs from Core.NATIVE_LIBRARY_NAME used by the Java wrapper/fallback. Android packaging had shown libopencv_java5.so, while Core.NATIVE_LIBRARY_NAME resolved to opencv_java500.
+
+POSITIVE REGRESSION RESULTS
+- media opening remains working
+- landscape preservation remains working
+- target box size/selection is not the failure
+- diagnostic system successfully identified the first real native runtime failure with full stack trace
+
+NEXT
+v0.4.6 explicitly tries System.loadLibrary("opencv_java5"), verifies Core.getVersionString(), then uses Core.NATIVE_LIBRARY_NAME only as a secondary fallback. CSRT behavior remains unchanged.
