@@ -6,7 +6,7 @@ This file is the mandatory working memory and operating procedure for the DVR Vi
 
 **Repository:** auxz2jz/Slot-9  
 **Project:** Android DVR Video Player  
-**Current planned version:** v0.4.5  
+**Current planned version:** v0.4.6  
 **Status:** Planning / pre-code  
 **Source of truth priority:** 1) this file, 2) DVR_PLAYER_ROADMAP.md, 3) TESTING_DIAGNOSTICS.md, 4) current source code and saved test/diagnostic reports, 5) conversation history.
 
@@ -179,10 +179,10 @@ If an implementation requires a major architecture change, record the reason bef
 **Playback foundation:** AndroidX Media3 / ExoPlayer  
 **Advanced vision direction:** OpenCV and/or an Android-compatible object-detection/tracking layer where useful  
 **Repository:** auxz2jz/Slot-9  
-**Current version:** v0.4.5 development
+**Current version:** v0.4.6 development
 **Last known working version:** v0.3.1 — physical-device guided test PASS
-**Build status:** v0.3.1 remains known-good; v0.4.4 compiled/ran but CSRT target initialization failed on every valid selection; v0.4.5 OpenCV runtime-loader correction in progress
-**Current phase:** OpenCV runtime initialization correction before CSRT tracking validation
+**Build status:** v0.3.1 remains known-good; v0.4.5 compiled/ran and diagnostics identified exact native OpenCV library-name mismatch; v0.4.6 targeted loader fix planned
+**Current phase:** OpenCV native library-name compatibility before CSRT tracking validation
 
 ---
 
@@ -190,67 +190,68 @@ If an implementation requires a major architecture change, record the reason bef
 
 ## User Request
 
-Review v0.4.4 diagnostic ZIPs after the guided test failed during target selection/initialization, and improve the project so CSRT can actually initialize before further tracking-quality work.
+Review v0.4.5 diagnostic ZIPs and continue correcting target-tracker initialization based on the exact runtime evidence.
 
 ## Diagnostic Findings
 
-Both uploaded v0.4.4 ZIPs are duplicate exports of the same session:
-- session ID: b872b16e-a4fc-48ea-927d-92ab618baaa1
+The two uploaded v0.4.5 ZIPs are duplicate exports of the same session:
+- session ID: 41abb446-9d59-4ca2-ba21-8262ac4ba25b
 - test ID: target_tracking_v4_3
-
-Results:
 - Open media PASS
 - Landscape preservation PASS
-- Select target FAIL after the tester stopped the step
-- No TRACK_TARGET_CONFIRMED event occurred
-- Seven TARGET_INITIALIZATION_FAILED events occurred
-- All failures used reason=invalid_target_or_capture
-- The selected target boxes were not too small. Examples ranged from approximately 34x47 to 110x148 analysis pixels, all above the tracker minimum.
-- Because initialize() can return null before frame conversion only when OpenCV runtime loading fails (or when target dimensions are invalid, which diagnostics rule out), the leading hypothesis is OpenCVLoader.initLocal() returning false with the contrib AAR on this device/runtime.
+- Select target FAIL
+
+The new initialization diagnostics identified the exact first failure:
+- OpenCVLoader.initLocal() returned false.
+- Fallback called System.loadLibrary(Core.NATIVE_LIBRARY_NAME).
+- Core.NATIVE_LIBRARY_NAME resolved to `opencv_java500`.
+- Android threw `UnsatisfiedLinkError: dlopen failed: library "libopencv_java500.so" not found`.
+- Previous Android build output for the same contrib dependency showed the packaged native library is `libopencv_java5.so`.
+- Therefore the failure is a native-library naming mismatch between the Java constant and the contrib AAR packaging, not target size, zoom mapping, CSRT logic or user selection.
 
 ## Goal
 
-Create v0.4.5 as a targeted OpenCV runtime-initialization fix. Do not change CSRT tracking behavior, zoom-assisted selection, coordinate mapping or the v0.4.3 guided-test contract until the tracker can initialize successfully.
+Create v0.4.6 as a minimal OpenCV native-loader compatibility fix. Preserve CSRT behavior and all v0.4.3-v0.4.5 tracking/selection/test logic.
 
 ## Implementation Plan
 
-1. Start from exact v0.4.4 source.
-2. Preserve CSRT tracking/appearance/template/jump logic unchanged.
-3. Replace the single OpenCVLoader.initLocal() gate with a staged loader:
-   - try OpenCVLoader.initLocal()
-   - verify the native runtime with Core.getVersionString()
-   - if initLocal fails or runtime verification fails, try System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
-   - verify again with Core.getVersionString()
-4. Record detailed initialization diagnostics in OpenCvCsrtTracker: load method, stage, OpenCV version, exception type/message/stack where applicable.
-5. On TARGET_INITIALIZATION_FAILED, include those exact diagnostics plus frame dimensions and selected target pixel dimensions instead of generic invalid_target_or_capture only.
-6. Add a positive OPENCV_RUNTIME_READY diagnostic when initialization succeeds.
-7. Increase version to v0.4.5 / versionCode 10.
-8. Keep guided test ID target_tracking_v4_3 because behavior under test is unchanged.
-9. Package Android Studio ZIP and require compile/device retest.
-10. Keep v0.3.1 as last physical-device known-good baseline.
+1. Start from exact v0.4.5 source.
+2. Keep OpenCVLoader.initLocal() as the first attempt.
+3. If it fails, explicitly try the actual packaged library name `opencv_java5`.
+4. If needed, also try Core.NATIVE_LIBRARY_NAME as a secondary compatibility candidate.
+5. After each successful System.loadLibrary call, verify the runtime with Core.getVersionString().
+6. Record the exact attempted library names and failure messages in initialization diagnostics.
+7. Do not alter CSRT tracker thresholds, target mapping, analysis resolution, appearance/template checks or guided-test PASS logic.
+8. Increase version to v0.4.6 / versionCode 11.
+9. Package Android Studio ZIP and require physical-device retest.
+10. Keep v0.3.1 as the last physical-device known-good baseline until CSRT tracking itself passes.
 
 ## Files Expected to Change
 
-- OpenCvCsrtTracker.kt
-- DvrPlayerApp.kt diagnostics around target initialization
+- OpenCvCsrtTracker.kt loader only
+- DvrPlayerApp.kt version label only
 - app/build.gradle.kts version
-- README.md/version labels
+- README.md/version
 - PROJECT_MEMORY.md
 - TESTING_DIAGNOSTICS.md
-- v0.4.4 failure report
-- v0.4.5 source candidate report
+- v0.4.5 failure report
+- v0.4.6 source candidate report
 
 ## Files That Should NOT Be Changed
 
-- CSRT tracking algorithm behavior
+- CSRT tracking algorithm
 - zoom/source-coordinate mapping
-- guided-test PASS/FAIL thresholds
+- tracking thresholds
+- guided-test behavior
 - playback/DVR controls
-- v0.3.1 known-good files
+- known-good v0.3.1 files
 
 ---
 
 # WORK IN PROGRESS
+
+- v0.4.5 diagnostics identified `libopencv_java500.so` not found while the packaged library is `libopencv_java5.so`.
+- v0.4.6 will change only the native OpenCV library-loading fallback and version markers.
 
 - v0.4.5 ZIP SHA-256: `9a9ff5a3327fb82799f7bedeef4a0a883e7f3f66fd009eaadc909586513f6e3a`.
 - v0.4.5 OpenCV runtime-loader correction implemented; Android Studio-ready ZIP packaged and integrity-checked.
