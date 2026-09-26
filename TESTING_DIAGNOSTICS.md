@@ -623,7 +623,7 @@ For every new feature commit/checkpoint:
 # CURRENT STATUS
 
 **Date:** 2026-09-23  
-**Version:** v0.4.5 development  
+**Version:** v0.4.6 development  
 **Status:** v0.4.2 passed landscape/selection but failed real object tracking; v0.4.3 CSRT + zoom-selection candidate awaiting Android Studio/device validation.
 
 Implemented in v0.1.0 source:
@@ -867,3 +867,21 @@ Failure stages distinguish at least:
 - tracker_init_failed
 
 Do not change tracking thresholds/algorithm again until CSRT reaches `TRACK_TARGET_CONFIRMED` and produces TRACK_SAMPLE events on the physical device.
+
+
+## v0.4.6 Native Library Name Compatibility
+
+The `target_tracking_v4_3` guided-test behavior is unchanged.
+
+v0.4.5 runtime diagnostics proved:
+- `OpenCVLoader.initLocal()` returned false;
+- `Core.NATIVE_LIBRARY_NAME` resolved to `opencv_java500`;
+- Android could not find `libopencv_java500.so`;
+- Android packaging for the contrib dependency had previously shown `libopencv_java5.so`.
+
+v0.4.6 therefore tries:
+1. `OpenCVLoader.initLocal()`;
+2. `System.loadLibrary("opencv_java5")`;
+3. `System.loadLibrary(Core.NATIVE_LIBRARY_NAME)` only as a secondary fallback.
+
+Every successful load is verified with `Core.getVersionString()`. Do not alter CSRT tracking behavior until `OPENCV_RUNTIME_READY` and `TRACK_TARGET_CONFIRMED` occur on-device.
