@@ -623,8 +623,8 @@ For every new feature commit/checkpoint:
 # CURRENT STATUS
 
 **Date:** 2026-09-23  
-**Version:** v0.4.1 development  
-**Status:** v0.4.0 failed physical-device tracking/orientation validation; v0.4.1 corrective candidate awaiting Android Studio/device validation.
+**Version:** v0.4.3 development  
+**Status:** v0.4.2 passed landscape/selection but failed real object tracking; v0.4.3 CSRT + zoom-selection candidate awaiting Android Studio/device validation.
 
 Implemented in v0.1.0 source:
 - session-specific JSONL event logger,
@@ -791,3 +791,35 @@ Changed diagnostic signals:
 - `TEST / TESTER_REPORTED_TRACKING_VISUALLY_WRONG`
 
 A movement test must never pass solely because a box moved.
+
+
+---
+
+# v0.4.3 CSRT + ZOOM-ASSISTED TARGET TRACKING TEST
+
+## Test ID
+
+`target_tracking_v4_3`
+
+1. Open media and reach READY.
+2. Rotate to landscape; same media must remain loaded.
+3. Pause on a sharp target frame. For a small target, zoom/pan before pressing Select Target. Draw a tight box with minimal background and Confirm Target.
+4. The app inverse-maps the zoomed display box to source coordinates, logs selection zoom/pan and analysis target size, resets viewing to 1x, and initializes OpenCV CSRT.
+5. Play at 1x or 0.50x for fast motion. Objective tracking diagnostics must remain plausible, but tracking does NOT auto-pass.
+6. Tester must press **Tracking Looks Correct** only when the blue box visibly stays on the selected object. **Tracking Is Wrong** records FAIL.
+7. Seek to footage without the object and verify explicit TRACK LOST.
+
+New/changed tracking diagnostics:
+- tracker=`opencv_csrt`
+- selectionZoom / selectionPanX / selectionPanY
+- mapped source target rectangle
+- analysisPixelWidth / analysisPixelHeight
+- OpenCV native trackingScore and `nativeScoreAvailable`
+- 8x8x8 inner-box RGB appearance similarity
+- fixed 64x64 grayscale-template similarity
+- movedDistanceNormalized / allowedJumpNormalized
+- processingTimeMs
+- TRACK_REJECTED_JUMP / TRACK_NOT_LOCATED / TRACK_LOST
+
+False-positive rule:
+Stable movement or a high appearance score alone must never PASS tracking. Human confirmation that the overlay is on the actual target remains mandatory.
