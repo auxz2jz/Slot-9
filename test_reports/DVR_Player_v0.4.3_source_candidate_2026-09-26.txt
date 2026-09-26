@@ -1,0 +1,33 @@
+DVR VIDEO PLAYER — v0.4.3 SOURCE CANDIDATE
+Date: 2026-09-26
+Known-good base: v0.3.1 physical-device PASS
+Immediate diagnostic base: v0.4.2 tracking FAIL, landscape PASS
+
+CHANGES
+- OpenCV TrackerCSRT replaces TrackerMIL
+- analysis capture increased 480x270 -> 640x360
+- zoom/pan may be used before Select Target
+- zoomed display selection is inverse-mapped to original video coordinates
+- display resets to 1x after Confirm Target
+- selection logs zoom/pan, source rect and analysis pixel size
+- finer inner-box 8x8x8 RGB appearance histogram
+- fixed 64x64 grayscale-template correlation
+- native OpenCV score logged separately with availability flag
+- jump rejection, TRACK LOST and tester confirmation preserved
+- guided test ID target_tracking_v4_3
+
+LOCAL VALIDATION
+- OpenCvCsrtTracker compiles against a lightweight stub matching documented OpenCV Java API
+- GuidedTestController compiles against lightweight platform stubs
+- DvrPlayerApp syntax parse produced no parser errors
+- Android XML parses
+- inverse zoom/pan transform round-trip checked
+- ZIP integrity passed
+- SHA256 325e187195acae96895a47282b4e5e27ec730c94d938aaf7e524bec7fc3a35ac
+- full Gradle build unavailable locally because services.gradle.org cannot be resolved
+
+STATUS
+ANDROID STUDIO COMPILE + PHYSICAL DEVICE target_tracking_v4_3 REQUIRED
+
+RECOVERY
+v0.3.1 remains the last physical-device known-good baseline until v0.4.3 passes.
