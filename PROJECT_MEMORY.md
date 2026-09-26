@@ -252,7 +252,8 @@ Create v0.4.5 as a targeted OpenCV runtime-initialization fix. Do not change CSR
 
 # WORK IN PROGRESS
 
-- v0.4.5 OpenCV runtime-loader correction implemented; Android Studio ZIP packaging/verification is the current handoff step.
+- v0.4.5 ZIP SHA-256: `9a9ff5a3327fb82799f7bedeef4a0a883e7f3f66fd009eaadc909586513f6e3a`.
+- v0.4.5 OpenCV runtime-loader correction implemented; Android Studio-ready ZIP packaged and integrity-checked.
 - v0.4.5 tries OpenCVLoader.initLocal(), then System.loadLibrary(Core.NATIVE_LIBRARY_NAME), and verifies with Core.getVersionString().
 - Initialization failures now identify the exact stage and exception instead of generic invalid_target_or_capture.
 
